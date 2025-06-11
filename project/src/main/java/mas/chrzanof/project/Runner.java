@@ -227,17 +227,17 @@ public class Runner {
             bobsEnrollment.addAnswer(answer1);
 
             // Answer for multichoice question about synonym for 'happy'
-            Answer answer2 = new Answer(bobsEnrollment, q2, "joyful");
+            Answer answer2 = new Answer(bobsEnrollment, q2, "sad");
             answer2.setIsCompleted(true);
-            answer2.setIsCorrect(true);
-            answer2.getNotes().add("Easy synonym to remember");
+            answer2.setIsCorrect(false);
+            answer2.getNotes().add("Confused with antonym");
             bobsEnrollment.addAnswer(answer2);
 
             // Answer for open question about past participle of 'write'
-            Answer answer3 = new Answer(bobsEnrollment, q3, "written");
+            Answer answer3 = new Answer(bobsEnrollment, q3, "wrote");
             answer3.setIsCompleted(true);
-            answer3.setIsCorrect(true);
-            answer3.getNotes().add("Regular past participle form");
+            answer3.setIsCorrect(false);
+            answer3.getNotes().add("Used simple past instead of past participle");
             bobsEnrollment.addAnswer(answer3);
 
             // Answer for open question about 'ubiquitous'
