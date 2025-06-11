@@ -25,15 +25,12 @@ public class CourseService {
             throw new IllegalArgumentException("Teacher cannot be null");
         }
         
-        // Refresh the course from the database to ensure we have the latest state
         Course refreshedCourse = courseRepository.findById(course.getId())
             .orElseThrow(() -> new IllegalArgumentException("Course not found"));
         
-        // Check if the teacher is already assigned to the course
         if (!refreshedCourse.getAssignedTeachers().contains(teacher)) {
             refreshedCourse.getAssignedTeachers().add(teacher);
             teacher.getAssignedCourses().add(refreshedCourse);
-            // Save only the course - the teacher relationship will be saved through cascade
             return courseRepository.save(refreshedCourse);
         }
         return refreshedCourse;
@@ -45,7 +42,6 @@ public class CourseService {
             throw new IllegalArgumentException("Teacher cannot be null");
         }
         
-        // Refresh the course from the database to ensure we have the latest state
         Course refreshedCourse = courseRepository.findById(course.getId())
             .orElseThrow(() -> new IllegalArgumentException("Course not found"));
         
@@ -55,7 +51,6 @@ public class CourseService {
             if (refreshedCourse.getTeacherInCharge() != null && refreshedCourse.getTeacherInCharge().equals(teacher)) {
                 refreshedCourse.setTeacherInCharge(null);
             }
-            // Save only the course - the teacher relationship will be saved through cascade
             return courseRepository.save(refreshedCourse);
         }
         return refreshedCourse;
@@ -63,7 +58,6 @@ public class CourseService {
 
     @Transactional
     public Course setTeacherInCharge(Course course, Teacher teacher) {
-        // Refresh the course from the database to ensure we have the latest state
         Course refreshedCourse = courseRepository.findById(course.getId())
             .orElseThrow(() -> new IllegalArgumentException("Course not found"));
             
@@ -81,7 +75,6 @@ public class CourseService {
             teacher.getCoursesInCharge().add(refreshedCourse);
         }
         
-        // Save only the course - the teacher relationships will be saved through cascade
         return courseRepository.save(refreshedCourse);
     }
 

@@ -27,19 +27,15 @@ public class EnrollmentService {
 
     @Transactional
     public Enrollment enrollStudent(Course course, Student student) {
-        // Check if student is already enrolled
         if (enrollmentRepository.existsByStudentIdAndCourseId(student.getId(), course.getId())) {
             throw new IllegalStateException("Student is already enrolled in this course");
         }
 
-        // Create new enrollment
         Enrollment enrollment = new Enrollment(course, student);
         
-        // Add enrollment to both sides of the relationship
         course.addEnrollment(enrollment);
         student.addEnrollment(enrollment);
         
-        // Save the enrollment directly
         return enrollmentRepository.save(enrollment);
     }
 
@@ -57,12 +53,10 @@ public class EnrollmentService {
 
     @Transactional
     public Enrollment saveEnrollment(Enrollment enrollment) {
-        // If the enrollment is new, save it
         if (enrollment.getId() == null) {
             return enrollmentRepository.save(enrollment);
         }
         
-        // If the enrollment exists, update it
         return enrollmentRepository.save(enrollment);
     }
 } 
