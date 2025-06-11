@@ -48,7 +48,7 @@ public class Runner {
                                  CourseService courseService,
                                  EnrollmentService enrollmentService) {
         return args -> {
-            // Create persons
+            
             Person john = new Person();
             john.setName("John");
             john.setSurname("Doe");
@@ -76,7 +76,7 @@ public class Runner {
             bob.setLanguagesKnown(Arrays.asList("English", "Polish"));
             personRepository.save(bob);
 
-            // Create teachers
+            
             Teacher teacher1 = new Teacher();
             teacher1.setPerson(john);
             teacherRepository.save(teacher1);
@@ -85,7 +85,7 @@ public class Runner {
             teacher2.setPerson(alice);
             teacherRepository.save(teacher2);
 
-            // Create students
+            
             Student student1 = new Student();
             student1.setPerson(alice); // Alice is both a teacher and a student
             studentRepository.save(student1);
@@ -94,7 +94,7 @@ public class Runner {
             student2.setPerson(bob);
             studentRepository.save(student2);
 
-            // Update person references
+            
             john.setTeacher(teacher1);
             alice.setTeacher(teacher2);
             alice.setStudent(student1);
@@ -102,7 +102,7 @@ public class Runner {
 
             personRepository.saveAll(Arrays.asList(john, alice, bob));
 
-            // Create flashcard decks
+            
             FlashcardDeck englishDeck = new FlashcardDeck();
             englishDeck.setTitle("English Vocabulary");
             englishDeck.setDescription("Basic English vocabulary for beginners");
@@ -121,7 +121,7 @@ public class Runner {
             germanDeck.setStudent(student2);
             flashcardDeckRepository.save(germanDeck);
 
-            // Create flashcards
+            
             Flashcard card1 = new Flashcard();
             card1.setQuestion("What is the past tense of 'go'?");
             card1.setAnswer("went");
@@ -157,7 +157,7 @@ public class Runner {
             card5.setFlashcardDeck(frenchDeck);
             flashcardRepository.save(card5);
 
-            // Create courses
+            
             Course englishCourse = new Course();
             englishCourse.setTitle("English Language Course");
             englishCourse.setDescription("Comprehensive English language course");
@@ -165,14 +165,14 @@ public class Runner {
             englishCourse.setAvailableTo(LocalDateTime.now().plusMonths(3));
             courseRepository.save(englishCourse);
 
-            // Assign teachers to the course
+            
             courseService.assignTeacher(englishCourse, teacher1);
             courseService.assignTeacher(englishCourse, teacher2);
 
-            // Set teacher in charge of the course
+            
             courseService.setTeacherInCharge(englishCourse, teacher1);
 
-            // Create quizzes
+            
             Quiz englishQuiz = new Quiz();
             englishQuiz.setTitle("English Grammar Quiz");
             englishQuiz.setDescription("Test your knowledge of English grammar");
@@ -180,7 +180,7 @@ public class Runner {
             englishQuiz.setCourse(englishCourse);
             quizRepository.save(englishQuiz);
 
-            // Add multichoice questions
+            
             MultichoiceQuestion q1 = new MultichoiceQuestion();
             q1.setText("Choose the correct past tense of 'go':");
             q1.setPoints(2);
@@ -199,7 +199,7 @@ public class Runner {
             q2.setCorrectOptionIndex(1);
             questionRepository.save(q2);
 
-            // Add open questions
+            
             OpenQuestion q3 = new OpenQuestion();
             q3.setText("What is the past participle of 'write'?");
             q3.setPoints(2);
@@ -216,31 +216,31 @@ public class Runner {
             q4.setCorrectAnswer("Present, appearing, or found everywhere");
             questionRepository.save(q4);
 
-            // Create enrollment for student2 (Bob)
+
             Enrollment bobsEnrollment = enrollmentService.enrollStudent(englishCourse, student2);
 
-            // Answer for multichoice question about past tense of 'go'
+
             Answer answer1 = new Answer(bobsEnrollment, q1, "went");
             answer1.setIsCompleted(true);
             answer1.setIsCorrect(true);
             answer1.getNotes().add("Remembered from previous lesson");
             bobsEnrollment.addAnswer(answer1);
 
-            // Answer for multichoice question about synonym for 'happy'
+
             Answer answer2 = new Answer(bobsEnrollment, q2, "sad");
             answer2.setIsCompleted(true);
             answer2.setIsCorrect(false);
             answer2.getNotes().add("Confused with antonym");
             bobsEnrollment.addAnswer(answer2);
 
-            // Answer for open question about past participle of 'write'
+            
             Answer answer3 = new Answer(bobsEnrollment, q3, "wrote");
             answer3.setIsCompleted(true);
             answer3.setIsCorrect(false);
             answer3.getNotes().add("Used simple past instead of past participle");
             bobsEnrollment.addAnswer(answer3);
 
-            // Answer for open question about 'ubiquitous'
+            
             Answer answer4 = new Answer(bobsEnrollment, q4, "Present, appearing, or found everywhere");
             answer4.setIsCompleted(true);
             answer4.setIsCorrect(true);
@@ -248,10 +248,10 @@ public class Runner {
             answer4.getNotes().add("Used in context: 'Smartphones have become ubiquitous in modern society'");
             bobsEnrollment.addAnswer(answer4);
 
-            // Save the enrollment with answers
+            
             enrollmentService.saveEnrollment(bobsEnrollment);
 
-            // Create lessons
+            
             Lesson lesson1 = new Lesson();
             lesson1.setTitle("Introduction to English Grammar");
             lesson1.setContent("In this lesson, we will cover the basics of English grammar, including parts of speech and sentence structure.");
@@ -273,7 +273,7 @@ public class Runner {
             lesson3.setCourse(englishCourse);
             lessonRepository.save(lesson3);
 
-            // Create another quiz
+            
             Quiz vocabularyQuiz = new Quiz();
             vocabularyQuiz.setTitle("Vocabulary Quiz");
             vocabularyQuiz.setDescription("Test your English vocabulary");
