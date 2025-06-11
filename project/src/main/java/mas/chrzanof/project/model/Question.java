@@ -10,6 +10,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,6 +29,10 @@ public abstract class Question {
 
     @Column(nullable = false)
     private Integer points;
+
+    @Column(nullable = false)
+    @Min(0)
+    private Integer positionIndex;
 
     @ManyToOne
     @JoinColumn(name = "quiz_id", nullable = false, updatable = false)
