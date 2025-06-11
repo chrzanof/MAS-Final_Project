@@ -7,7 +7,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import mas.chrzanof.project.model.Answer;
 import mas.chrzanof.project.model.Course;
+import mas.chrzanof.project.model.Enrollment;
 import mas.chrzanof.project.model.Flashcard;
 import mas.chrzanof.project.model.FlashcardDeck;
 import mas.chrzanof.project.model.Lesson;
@@ -170,31 +172,6 @@ public class Runner {
             // Set teacher in charge of the course
             courseService.setTeacherInCharge(englishCourse, teacher1);
 
-            // Create enrollment for student2 (Bob)
-            enrollmentService.enrollStudent(englishCourse, student2);
-
-            // Create lessons
-            Lesson lesson1 = new Lesson();
-            lesson1.setTitle("Introduction to English Grammar");
-            lesson1.setContent("In this lesson, we will cover the basics of English grammar, including parts of speech and sentence structure.");
-            lesson1.setLessonNumber(1);
-            lesson1.setCourse(englishCourse);
-            lessonRepository.save(lesson1);
-
-            Lesson lesson2 = new Lesson();
-            lesson2.setTitle("Present Tense Verbs");
-            lesson2.setContent("Learn about different forms of present tense verbs and how to use them correctly in sentences.");
-            lesson2.setLessonNumber(2);
-            lesson2.setCourse(englishCourse);
-            lessonRepository.save(lesson2);
-
-            Lesson lesson3 = new Lesson();
-            lesson3.setTitle("Past Tense Verbs");
-            lesson3.setContent("Understanding regular and irregular past tense verbs, and when to use them.");
-            lesson3.setLessonNumber(3);
-            lesson3.setCourse(englishCourse);
-            lessonRepository.save(lesson3);
-
             // Create quizzes
             Quiz englishQuiz = new Quiz();
             englishQuiz.setTitle("English Grammar Quiz");
@@ -238,6 +215,63 @@ public class Runner {
             q4.setQuiz(englishQuiz);
             q4.setCorrectAnswer("Present, appearing, or found everywhere");
             questionRepository.save(q4);
+
+            // Create enrollment for student2 (Bob)
+            Enrollment bobsEnrollment = enrollmentService.enrollStudent(englishCourse, student2);
+
+            // Answer for multichoice question about past tense of 'go'
+            Answer answer1 = new Answer(bobsEnrollment, q1, "went");
+            answer1.setIsCompleted(true);
+            answer1.setIsCorrect(true);
+            answer1.getNotes().add("Remembered from previous lesson");
+            bobsEnrollment.addAnswer(answer1);
+
+            // Answer for multichoice question about synonym for 'happy'
+            Answer answer2 = new Answer(bobsEnrollment, q2, "joyful");
+            answer2.setIsCompleted(true);
+            answer2.setIsCorrect(true);
+            answer2.getNotes().add("Easy synonym to remember");
+            bobsEnrollment.addAnswer(answer2);
+
+            // Answer for open question about past participle of 'write'
+            Answer answer3 = new Answer(bobsEnrollment, q3, "written");
+            answer3.setIsCompleted(true);
+            answer3.setIsCorrect(true);
+            answer3.getNotes().add("Regular past participle form");
+            bobsEnrollment.addAnswer(answer3);
+
+            // Answer for open question about 'ubiquitous'
+            Answer answer4 = new Answer(bobsEnrollment, q4, "Present, appearing, or found everywhere");
+            answer4.setIsCompleted(true);
+            answer4.setIsCorrect(true);
+            answer4.getNotes().add("Learned from vocabulary deck");
+            answer4.getNotes().add("Used in context: 'Smartphones have become ubiquitous in modern society'");
+            bobsEnrollment.addAnswer(answer4);
+
+            // Save the enrollment with answers
+            enrollmentService.saveEnrollment(bobsEnrollment);
+
+            // Create lessons
+            Lesson lesson1 = new Lesson();
+            lesson1.setTitle("Introduction to English Grammar");
+            lesson1.setContent("In this lesson, we will cover the basics of English grammar, including parts of speech and sentence structure.");
+            lesson1.setLessonNumber(1);
+            lesson1.setCourse(englishCourse);
+            lessonRepository.save(lesson1);
+
+            Lesson lesson2 = new Lesson();
+            lesson2.setTitle("Present Tense Verbs");
+            lesson2.setContent("Learn about different forms of present tense verbs and how to use them correctly in sentences.");
+            lesson2.setLessonNumber(2);
+            lesson2.setCourse(englishCourse);
+            lessonRepository.save(lesson2);
+
+            Lesson lesson3 = new Lesson();
+            lesson3.setTitle("Past Tense Verbs");
+            lesson3.setContent("Understanding regular and irregular past tense verbs, and when to use them.");
+            lesson3.setLessonNumber(3);
+            lesson3.setCourse(englishCourse);
+            lessonRepository.save(lesson3);
 
             // Create another quiz
             Quiz vocabularyQuiz = new Quiz();

@@ -39,11 +39,8 @@ public class EnrollmentService {
         course.addEnrollment(enrollment);
         student.addEnrollment(enrollment);
         
-        // Save the course which will cascade to the enrollment
-        return courseRepository.save(course).getEnrollments().stream()
-            .filter(e -> e.getStudent().equals(student))
-            .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Failed to create enrollment"));
+        // Save the enrollment directly
+        return enrollmentRepository.save(enrollment);
     }
 
     @Transactional
@@ -54,7 +51,18 @@ public class EnrollmentService {
             .ifPresent(enrollment -> {
                 course.removeEnrollment(enrollment);
                 student.removeEnrollment(enrollment);
-                courseRepository.save(course);
+                enrollmentRepository.delete(enrollment);
             });
+    }
+
+    @Transactional
+    public Enrollment saveEnrollment(Enrollment enrollment) {
+        // If the enrollment is new, save it
+        if (enrollment.getId() == null) {
+            return enrollmentRepository.save(enrollment);
+        }
+        
+        // If the enrollment exists, update it
+        return enrollmentRepository.save(enrollment);
     }
 } 
