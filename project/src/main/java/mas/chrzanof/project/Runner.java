@@ -297,6 +297,51 @@ public class Runner {
             q6.setQuiz(vocabularyQuiz);
             q6.setCorrectAnswer("It was pure serendipity that I found my lost book in the library.");
             questionRepository.save(q6);
+
+            // Create a second course
+            Course course2 = new Course();
+            course2.setTitle("Spanish for Beginners");
+            course2.setDescription("Learn essential Spanish vocabulary, grammar, and conversation skills");
+            course2.setAvailableFrom(LocalDateTime.now());
+            course2.setAvailableTo(LocalDateTime.now().plusMonths(6));
+            courseRepository.save(course2);
+
+            // Add lessons to the second course
+            Lesson lesson4 = new Lesson();
+            lesson4.setTitle("Basic Greetings and Introductions");
+            lesson4.setContent("Learn how to greet people and introduce yourself in Spanish");
+            lesson4.setLessonNumber(1);
+            lesson4.setCourse(course2);
+            lessonRepository.save(lesson4);
+
+            Lesson lesson5 = new Lesson();
+            lesson5.setTitle("Numbers and Colors");
+            lesson5.setContent("Master Spanish numbers from 1-100 and common colors");
+            lesson5.setLessonNumber(2);
+            lesson5.setCourse(course2);
+            lessonRepository.save(lesson5);
+
+            // Add quizzes to the second course
+            Quiz quiz3 = new Quiz();
+            quiz3.setTitle("Greetings Quiz");
+            quiz3.setDescription("Test your knowledge of Spanish greetings and introductions");
+            quiz3.setPositionIndex(1);
+            quiz3.setCourse(course2);
+            quizRepository.save(quiz3);
+
+            Quiz quiz4 = new Quiz();
+            quiz4.setTitle("Numbers and Colors Quiz");
+            quiz4.setDescription("Practice your Spanish numbers and colors vocabulary");
+            quiz4.setPositionIndex(2);
+            quiz4.setCourse(course2);
+            quizRepository.save(quiz4);
+
+            // Update the course with the new lessons and quizzes
+            course2.getLessons().put(lesson4.getLessonNumber(), lesson4);
+            course2.getLessons().put(lesson5.getLessonNumber(), lesson5);
+            course2.getQuizzes().add(quiz3);
+            course2.getQuizzes().add(quiz4);
+            courseRepository.save(course2);
         };
     }
 }

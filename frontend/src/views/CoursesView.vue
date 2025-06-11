@@ -3,7 +3,7 @@ export default {
   data() {
     return {
       courses: [],
-      selectedCourse: -1
+      selectedCourse: 0
     }
   },
   mounted() {
@@ -27,7 +27,6 @@ export default {
     },
     selectCourse(courseIndex: number) {
       this.selectedCourse = courseIndex;
-      console.log(this.selectedCourse);
     }
   }
 }
@@ -62,14 +61,14 @@ export default {
             <thead>
               <tr>
                 <th>Lesson Name</th>
-                <th>Description</th>
+                <th>Content</th>
               </tr>
             </thead>
             <tbody>
               <template v-if="courses && courses[selectedCourse]">
                 <tr v-for="lesson in courses[selectedCourse].lessons" :key="lesson.id">
                   <td>{{ lesson.title }}</td>
-                  <td>{{ lesson.description }}</td>
+                  <td>{{ lesson.content }}</td>
                 </tr>
               </template>
             </tbody>
