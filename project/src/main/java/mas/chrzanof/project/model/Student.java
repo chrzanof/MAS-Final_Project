@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PostPersist;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,9 +22,16 @@ public class Student {
     private Long id;
 
     @Column(unique = true)
-    private Long studentId;
+    private String studentId;
 
     @OneToOne
-    @JoinColumn(name = "person_id" , nullable = false, updatable=false)
+    @JoinColumn(name = "person_id", nullable = false, updatable=false)
     private Person person;
+
+    @PostPersist
+    public void generateStudentId() {
+        if (this.studentId == null) {
+            this.studentId = "s" + this.id;
+        }
+    }
 }

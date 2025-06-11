@@ -51,23 +51,19 @@ public class Runner {
 
             // Create teachers
             Teacher teacher1 = new Teacher();
-            teacher1.setTeacherId(1L);
             teacher1.setPerson(john);
             teacherRepository.save(teacher1);
 
             Teacher teacher2 = new Teacher();
-            teacher2.setTeacherId(2L);
             teacher2.setPerson(alice);
             teacherRepository.save(teacher2);
 
             // Create students
             Student student1 = new Student();
-            student1.setStudentId(1L);
             student1.setPerson(alice); // Alice is both a teacher and a student
             studentRepository.save(student1);
 
             Student student2 = new Student();
-            student2.setStudentId(2L);
             student2.setPerson(bob);
             studentRepository.save(student2);
 

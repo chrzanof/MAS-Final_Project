@@ -7,6 +7,6 @@ import mas.chrzanof.project.model.Student;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    Student findByStudentId(Long studentId);
+    Student findByStudentId(String studentId);
     Student findByPersonId(Long personId);
 } 
