@@ -28,6 +28,7 @@ import mas.chrzanof.project.repository.QuizRepository;
 import mas.chrzanof.project.repository.StudentRepository;
 import mas.chrzanof.project.repository.TeacherRepository;
 import mas.chrzanof.project.service.CourseService;
+import mas.chrzanof.project.service.EnrollmentService;
 
 @Configuration
 public class Runner {
@@ -42,7 +43,8 @@ public class Runner {
                                  QuestionRepository questionRepository,
                                  CourseRepository courseRepository,
                                  LessonRepository lessonRepository,
-                                 CourseService courseService) {
+                                 CourseService courseService,
+                                 EnrollmentService enrollmentService) {
         return args -> {
             // Create persons
             Person john = new Person();
@@ -167,6 +169,9 @@ public class Runner {
 
             // Set teacher in charge of the course
             courseService.setTeacherInCharge(englishCourse, teacher1);
+
+            // Create enrollment for student2 (Bob)
+            enrollmentService.enrollStudent(englishCourse, student2);
 
             // Create lessons
             Lesson lesson1 = new Lesson();
