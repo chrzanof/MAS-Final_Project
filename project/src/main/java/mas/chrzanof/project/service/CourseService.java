@@ -1,9 +1,20 @@
 package mas.chrzanof.project.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import mas.chrzanof.project.dto.CourseDTO;
+import mas.chrzanof.project.dto.LessonDTO;
+import mas.chrzanof.project.dto.QuizDTO;
 import mas.chrzanof.project.model.Course;
+import mas.chrzanof.project.model.Lesson;
+import mas.chrzanof.project.model.Quiz;
 import mas.chrzanof.project.model.Teacher;
 import mas.chrzanof.project.repository.CourseRepository;
 import mas.chrzanof.project.repository.TeacherRepository;
@@ -17,6 +28,92 @@ public class CourseService {
     public CourseService(CourseRepository courseRepository, TeacherRepository teacherRepository) {
         this.courseRepository = courseRepository;
         this.teacherRepository = teacherRepository;
+    }
+
+    public List<CourseDTO> getAllCourses() {
+        return courseRepository.findAll().stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+
+    private CourseDTO convertToDTO(Course course) {
+        CourseDTO dto = new CourseDTO();
+        dto.setId(course.getId());
+        dto.setTitle(course.getTitle());
+        dto.setDescription(course.getDescription());
+        dto.setAvailableFrom(course.getAvailableFrom());
+        dto.setAvailableTo(course.getAvailableTo());
+        
+        // Convert lessons to DTOs
+        Map<Integer, LessonDTO> lessonDTOs = new HashMap<>();
+        course.getLessons().forEach((number, lesson) -> {
+            LessonDTO lessonDTO = new LessonDTO();
+            lessonDTO.setId(lesson.getId());
+            lessonDTO.setTitle(lesson.getTitle());
+            lessonDTO.setContent(lesson.getContent());
+            lessonDTO.setLessonNumber(lesson.getLessonNumber());
+            lessonDTOs.put(number, lessonDTO);
+        });
+        dto.setLessons(lessonDTOs);
+        
+        // Convert quizzes to DTOs
+        List<QuizDTO> quizDTOs = course.getQuizzes().stream()
+            .map(quiz -> {
+                QuizDTO quizDTO = new QuizDTO();
+                quizDTO.setId(quiz.getId());
+                quizDTO.setTitle(quiz.getTitle());
+                quizDTO.setDescription(quiz.getDescription());
+                quizDTO.setPositionIndex(quiz.getPositionIndex());
+                return quizDTO;
+            })
+            .collect(Collectors.toList());
+        dto.setQuizzes(quizDTOs);
+        
+        return dto;
+    }
+
+    @Transactional
+    public Course createCourse(Course course) {
+        return courseRepository.save(course);
+    }
+
+    @Transactional
+    public Course addLessonToCourse(Long courseId, Lesson lesson) {
+        Course course = getCourseById(courseId);
+        lesson.setCourse(course);
+        course.getLessons().put(lesson.getLessonNumber(), lesson);
+        return courseRepository.save(course);
+    }
+
+    @Transactional
+    public Course addQuizToCourse(Long courseId, Quiz quiz) {
+        Course course = getCourseById(courseId);
+        quiz.setCourse(course);
+        course.getQuizzes().add(quiz);
+        return courseRepository.save(course);
+    }
+
+    public Course getCourseById(Long id) {
+        return courseRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Course not found with id: " + id));
+    }
+
+    @Transactional
+    public Course updateCourse(Long id, Course updatedCourse) {
+        Course existingCourse = getCourseById(id);
+        existingCourse.setTitle(updatedCourse.getTitle());
+        existingCourse.setDescription(updatedCourse.getDescription());
+        existingCourse.setAvailableFrom(updatedCourse.getAvailableFrom());
+        existingCourse.setAvailableTo(updatedCourse.getAvailableTo());
+        return courseRepository.save(existingCourse);
+    }
+
+    @Transactional
+    public void deleteCourse(Long id) {
+        if (!courseRepository.existsById(id)) {
+            throw new NoSuchElementException("Course not found with id: " + id);
+        }
+        courseRepository.deleteById(id);
     }
 
     @Transactional
