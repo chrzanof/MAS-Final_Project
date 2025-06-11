@@ -17,6 +17,11 @@ import mas.chrzanof.project.repository.FlashcardRepository;
 import mas.chrzanof.project.repository.PersonRepository;
 import mas.chrzanof.project.repository.StudentRepository;
 import mas.chrzanof.project.repository.TeacherRepository;
+import mas.chrzanof.project.model.Quiz;
+import mas.chrzanof.project.model.MultichoiceQuestion;
+import mas.chrzanof.project.model.OpenQuestion;
+import mas.chrzanof.project.repository.QuizRepository;
+import mas.chrzanof.project.repository.QuestionRepository;
 
 @Configuration
 public class Runner {
@@ -26,7 +31,9 @@ public class Runner {
                                  TeacherRepository teacherRepository,
                                  StudentRepository studentRepository,
                                  FlashcardDeckRepository flashcardDeckRepository,
-                                 FlashcardRepository flashcardRepository) {
+                                 FlashcardRepository flashcardRepository,
+                                 QuizRepository quizRepository,
+                                 QuestionRepository questionRepository) {
         return args -> {
             // Create persons
             Person john = new Person();
@@ -136,6 +143,71 @@ public class Runner {
             card5.setState(State.LEARNING);
             card5.setFlashcardDeck(frenchDeck);
             flashcardRepository.save(card5);
+
+            // Create quizzes
+            Quiz englishQuiz = new Quiz();
+            englishQuiz.setTitle("English Grammar Quiz");
+            englishQuiz.setDescription("Test your knowledge of English grammar");
+            quizRepository.save(englishQuiz);
+
+            // Add multichoice questions
+            MultichoiceQuestion q1 = new MultichoiceQuestion();
+            q1.setText("Choose the correct past tense of 'go':");
+            q1.setPoints(2);
+            q1.setPositionIndex(0);
+            q1.setQuiz(englishQuiz);
+            q1.setOptions(Arrays.asList("goed", "went", "gone", "going"));
+            q1.setCorrectOptionIndex(1);
+            questionRepository.save(q1);
+
+            MultichoiceQuestion q2 = new MultichoiceQuestion();
+            q2.setText("Which word is a synonym for 'happy'?");
+            q2.setPoints(1);
+            q2.setPositionIndex(1);
+            q2.setQuiz(englishQuiz);
+            q2.setOptions(Arrays.asList("sad", "joyful", "angry", "tired"));
+            q2.setCorrectOptionIndex(1);
+            questionRepository.save(q2);
+
+            // Add open questions
+            OpenQuestion q3 = new OpenQuestion();
+            q3.setText("What is the past participle of 'write'?");
+            q3.setPoints(2);
+            q3.setPositionIndex(2);
+            q3.setQuiz(englishQuiz);
+            q3.setCorrectAnswer("written");
+            questionRepository.save(q3);
+
+            OpenQuestion q4 = new OpenQuestion();
+            q4.setText("Define the word 'ubiquitous'.");
+            q4.setPoints(3);
+            q4.setPositionIndex(3);
+            q4.setQuiz(englishQuiz);
+            q4.setCorrectAnswer("Present, appearing, or found everywhere");
+            questionRepository.save(q4);
+
+            // Create another quiz
+            Quiz vocabularyQuiz = new Quiz();
+            vocabularyQuiz.setTitle("Vocabulary Quiz");
+            vocabularyQuiz.setDescription("Test your English vocabulary");
+            quizRepository.save(vocabularyQuiz);
+
+            MultichoiceQuestion q5 = new MultichoiceQuestion();
+            q5.setText("What is the meaning of 'ephemeral'?");
+            q5.setPoints(2);
+            q5.setPositionIndex(0);
+            q5.setQuiz(vocabularyQuiz);
+            q5.setOptions(Arrays.asList("lasting forever", "lasting for a very short time", "extremely large", "extremely small"));
+            q5.setCorrectOptionIndex(1);
+            questionRepository.save(q5);
+
+            OpenQuestion q6 = new OpenQuestion();
+            q6.setText("Use the word 'serendipity' in a sentence.");
+            q6.setPoints(4);
+            q6.setPositionIndex(1);
+            q6.setQuiz(vocabularyQuiz);
+            q6.setCorrectAnswer("It was pure serendipity that I found my lost book in the library.");
+            questionRepository.save(q6);
         };
     }
 }
