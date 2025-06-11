@@ -8,20 +8,20 @@ import org.springframework.context.annotation.Configuration;
 
 import mas.chrzanof.project.model.Flashcard;
 import mas.chrzanof.project.model.FlashcardDeck;
+import mas.chrzanof.project.model.MultichoiceQuestion;
+import mas.chrzanof.project.model.OpenQuestion;
 import mas.chrzanof.project.model.Person;
+import mas.chrzanof.project.model.Quiz;
 import mas.chrzanof.project.model.Student;
 import mas.chrzanof.project.model.Teacher;
 import mas.chrzanof.project.model.enums.State;
 import mas.chrzanof.project.repository.FlashcardDeckRepository;
 import mas.chrzanof.project.repository.FlashcardRepository;
 import mas.chrzanof.project.repository.PersonRepository;
+import mas.chrzanof.project.repository.QuestionRepository;
+import mas.chrzanof.project.repository.QuizRepository;
 import mas.chrzanof.project.repository.StudentRepository;
 import mas.chrzanof.project.repository.TeacherRepository;
-import mas.chrzanof.project.model.Quiz;
-import mas.chrzanof.project.model.MultichoiceQuestion;
-import mas.chrzanof.project.model.OpenQuestion;
-import mas.chrzanof.project.repository.QuizRepository;
-import mas.chrzanof.project.repository.QuestionRepository;
 
 @Configuration
 public class Runner {
