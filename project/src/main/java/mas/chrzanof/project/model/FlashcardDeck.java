@@ -10,36 +10,33 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.PostPersist;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "students")
+@Table(name = "flashcard_decks")
 @NoArgsConstructor
 @Data
-public class Student {
+public class FlashcardDeck {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String studentId;
+    @Column(nullable = false)
+    private String title;
 
-    @OneToOne
-    @JoinColumn(name = "person_id", nullable = false, updatable=false)
-    private Person person;
+    @Column(nullable = false)
+    private String description;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
-    private List<FlashcardDeck> flashcardDecks = new ArrayList<>();
+    @OneToMany(mappedBy = "flashcardDeck", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Flashcard> flashcards = new ArrayList<>();
 
-    @PostPersist
-    public void generateStudentId() {
-        if (this.studentId == null) {
-            this.studentId = "s" + this.id;
-        }
-    }
+    @ManyToOne
+    @JoinColumn(name = "student_id")
+    private Student student;
+
 }
