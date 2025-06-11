@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +45,27 @@ public class Enrollment {
 
     @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Answer> answers = new ArrayList<>();
+
+    @Transient
+    public Double getCompletionPercentage() {
+        if (course == null || course.getQuizzes() == null || course.getQuizzes().isEmpty()) {
+            return 0.0;
+        }
+
+        long totalQuestions = course.getQuizzes().stream()
+            .flatMap(quiz -> quiz.getQuestions().stream())
+            .count();
+
+        if (totalQuestions == 0) {
+            return 0.0;
+        }
+
+        long completedQuestions = answers.stream()
+            .filter(Answer::getIsCompleted)
+            .count();
+
+        return (double) completedQuestions / totalQuestions * 100;
+    }
 
     public Enrollment(Course course, Student student) {
         this.course = course;
