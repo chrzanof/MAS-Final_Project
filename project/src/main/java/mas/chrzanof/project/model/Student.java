@@ -2,6 +2,7 @@ package mas.chrzanof.project.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,13 +14,15 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "students")
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,5 +43,19 @@ public class Student {
         if (this.studentId == null) {
             this.studentId = "s" + this.id;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student = (Student) o;
+        return Objects.equals(id, student.id) &&
+               Objects.equals(studentId, student.studentId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, studentId);
     }
 }

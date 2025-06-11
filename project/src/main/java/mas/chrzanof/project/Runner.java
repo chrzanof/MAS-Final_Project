@@ -27,6 +27,7 @@ import mas.chrzanof.project.repository.QuestionRepository;
 import mas.chrzanof.project.repository.QuizRepository;
 import mas.chrzanof.project.repository.StudentRepository;
 import mas.chrzanof.project.repository.TeacherRepository;
+import mas.chrzanof.project.service.CourseService;
 
 @Configuration
 public class Runner {
@@ -40,7 +41,8 @@ public class Runner {
                                  QuizRepository quizRepository,
                                  QuestionRepository questionRepository,
                                  CourseRepository courseRepository,
-                                 LessonRepository lessonRepository) {
+                                 LessonRepository lessonRepository,
+                                 CourseService courseService) {
         return args -> {
             // Create persons
             Person john = new Person();
@@ -158,6 +160,13 @@ public class Runner {
             englishCourse.setAvailableFrom(LocalDateTime.now());
             englishCourse.setAvailableTo(LocalDateTime.now().plusMonths(3));
             courseRepository.save(englishCourse);
+
+            // Assign teachers to the course
+            courseService.assignTeacher(englishCourse, teacher1);
+            courseService.assignTeacher(englishCourse, teacher2);
+
+            // Set teacher in charge of the course
+            courseService.setTeacherInCharge(englishCourse, teacher1);
 
             // Create lessons
             Lesson lesson1 = new Lesson();

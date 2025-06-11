@@ -3,8 +3,10 @@ package mas.chrzanof.project.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -12,6 +14,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapKey;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
@@ -44,6 +50,18 @@ public class Course {
     @NotNull
     @Column(name = "available_to", nullable = false)
     private LocalDateTime availableTo;
+
+    @ManyToMany
+    @JoinTable(
+        name = "course_teacher_assignment",
+        joinColumns = @JoinColumn(name = "course_id"),
+        inverseJoinColumns = @JoinColumn(name = "teacher_id")
+    )
+    private Set<Teacher> assignedTeachers = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_in_charge_id")
+    private Teacher teacherInCharge;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("positionIndex ASC")
