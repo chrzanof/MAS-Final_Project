@@ -1,9 +1,5 @@
 package mas.chrzanof.project.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -11,17 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "quizzes")
+@Table(name = "lessons")
 @NoArgsConstructor
 @Data
-public class Quiz {
+public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,16 +24,12 @@ public class Quiz {
     private String title;
 
     @Column(nullable = true)
-    private String description;
+    private String content;
 
     @Column(nullable = false)
-    @Min(0)
-    private Integer positionIndex;
+    private Integer lessonNumber;
 
     @ManyToOne
-    @JoinColumn(name = "course_id", nullable = false, updatable = false)
+    @JoinColumn(name = "course_id", nullable = false)
     private Course course;
-
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions = new ArrayList<>();
 }

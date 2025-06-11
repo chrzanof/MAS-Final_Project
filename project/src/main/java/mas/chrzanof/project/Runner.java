@@ -1,13 +1,16 @@
 package mas.chrzanof.project;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import mas.chrzanof.project.model.Course;
 import mas.chrzanof.project.model.Flashcard;
 import mas.chrzanof.project.model.FlashcardDeck;
+import mas.chrzanof.project.model.Lesson;
 import mas.chrzanof.project.model.MultichoiceQuestion;
 import mas.chrzanof.project.model.OpenQuestion;
 import mas.chrzanof.project.model.Person;
@@ -15,8 +18,10 @@ import mas.chrzanof.project.model.Quiz;
 import mas.chrzanof.project.model.Student;
 import mas.chrzanof.project.model.Teacher;
 import mas.chrzanof.project.model.enums.State;
+import mas.chrzanof.project.repository.CourseRepository;
 import mas.chrzanof.project.repository.FlashcardDeckRepository;
 import mas.chrzanof.project.repository.FlashcardRepository;
+import mas.chrzanof.project.repository.LessonRepository;
 import mas.chrzanof.project.repository.PersonRepository;
 import mas.chrzanof.project.repository.QuestionRepository;
 import mas.chrzanof.project.repository.QuizRepository;
@@ -33,7 +38,9 @@ public class Runner {
                                  FlashcardDeckRepository flashcardDeckRepository,
                                  FlashcardRepository flashcardRepository,
                                  QuizRepository quizRepository,
-                                 QuestionRepository questionRepository) {
+                                 QuestionRepository questionRepository,
+                                 CourseRepository courseRepository,
+                                 LessonRepository lessonRepository) {
         return args -> {
             // Create persons
             Person john = new Person();
@@ -144,10 +151,42 @@ public class Runner {
             card5.setFlashcardDeck(frenchDeck);
             flashcardRepository.save(card5);
 
+            // Create courses
+            Course englishCourse = new Course();
+            englishCourse.setTitle("English Language Course");
+            englishCourse.setDescription("Comprehensive English language course");
+            englishCourse.setAvailableFrom(LocalDateTime.now());
+            englishCourse.setAvailableTo(LocalDateTime.now().plusMonths(3));
+            courseRepository.save(englishCourse);
+
+            // Create lessons
+            Lesson lesson1 = new Lesson();
+            lesson1.setTitle("Introduction to English Grammar");
+            lesson1.setContent("In this lesson, we will cover the basics of English grammar, including parts of speech and sentence structure.");
+            lesson1.setLessonNumber(1);
+            lesson1.setCourse(englishCourse);
+            lessonRepository.save(lesson1);
+
+            Lesson lesson2 = new Lesson();
+            lesson2.setTitle("Present Tense Verbs");
+            lesson2.setContent("Learn about different forms of present tense verbs and how to use them correctly in sentences.");
+            lesson2.setLessonNumber(2);
+            lesson2.setCourse(englishCourse);
+            lessonRepository.save(lesson2);
+
+            Lesson lesson3 = new Lesson();
+            lesson3.setTitle("Past Tense Verbs");
+            lesson3.setContent("Understanding regular and irregular past tense verbs, and when to use them.");
+            lesson3.setLessonNumber(3);
+            lesson3.setCourse(englishCourse);
+            lessonRepository.save(lesson3);
+
             // Create quizzes
             Quiz englishQuiz = new Quiz();
             englishQuiz.setTitle("English Grammar Quiz");
             englishQuiz.setDescription("Test your knowledge of English grammar");
+            englishQuiz.setPositionIndex(0);
+            englishQuiz.setCourse(englishCourse);
             quizRepository.save(englishQuiz);
 
             // Add multichoice questions
@@ -190,6 +229,8 @@ public class Runner {
             Quiz vocabularyQuiz = new Quiz();
             vocabularyQuiz.setTitle("Vocabulary Quiz");
             vocabularyQuiz.setDescription("Test your English vocabulary");
+            vocabularyQuiz.setPositionIndex(1);
+            vocabularyQuiz.setCourse(englishCourse);
             quizRepository.save(vocabularyQuiz);
 
             MultichoiceQuestion q5 = new MultichoiceQuestion();
