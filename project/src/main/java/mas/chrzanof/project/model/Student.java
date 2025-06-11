@@ -3,7 +3,6 @@ package mas.chrzanof.project.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +32,7 @@ public class Student {
     @JoinColumn(name = "person_id", nullable = false, updatable=false)
     private Person person;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student")
     private List<FlashcardDeck> flashcardDecks = new ArrayList<>();
 
     @PostPersist
