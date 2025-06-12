@@ -44,7 +44,7 @@ public class CourseService {
         dto.setAvailableFrom(course.getAvailableFrom());
         dto.setAvailableTo(course.getAvailableTo());
         
-        // Convert lessons to DTOs
+
         Map<Integer, LessonDTO> lessonDTOs = new HashMap<>();
         course.getLessons().forEach((number, lesson) -> {
             LessonDTO lessonDTO = new LessonDTO();
@@ -56,7 +56,7 @@ public class CourseService {
         });
         dto.setLessons(lessonDTOs);
         
-        // Convert quizzes to DTOs
+        
         List<QuizDTO> quizDTOs = course.getQuizzes().stream()
             .map(quiz -> {
                 QuizDTO quizDTO = new QuizDTO();
