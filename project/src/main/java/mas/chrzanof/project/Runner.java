@@ -89,7 +89,7 @@ public class Runner {
 
             
             Student student1 = new Student();
-            student1.setPerson(alice); // Alice is both a teacher and a student
+            student1.setPerson(alice);
             studentRepository.save(student1);
 
             Student student2 = new Student();
@@ -300,7 +300,7 @@ public class Runner {
             q6.setCorrectAnswer("It was pure serendipity that I found my lost book in the library.");
             questionRepository.save(q6);
 
-            // Create a second course
+
             Course course2 = new Course();
             course2.setTitle("Spanish for Beginners");
             course2.setDescription("Learn essential Spanish vocabulary, grammar, and conversation skills");
@@ -308,7 +308,7 @@ public class Runner {
             course2.setAvailableTo(LocalDateTime.now().plusMonths(6));
             courseRepository.save(course2);
 
-            // Add lessons to the second course
+
             Lesson lesson4 = new Lesson();
             lesson4.setTitle("Basic Greetings and Introductions");
             lesson4.setContent("Learn how to greet people and introduce yourself in Spanish");
@@ -323,7 +323,7 @@ public class Runner {
             lesson5.setCourse(course2);
             lessonRepository.save(lesson5);
 
-            // Add quizzes to the second course
+
             Quiz quiz3 = new Quiz();
             quiz3.setTitle("Greetings Quiz");
             quiz3.setDescription("Test your knowledge of Spanish greetings and introductions");
@@ -338,7 +338,7 @@ public class Runner {
             quiz4.setCourse(course2);
             quizRepository.save(quiz4);
 
-            // Update the course with the new lessons and quizzes
+
             course2.getLessons().put(lesson4.getLessonNumber(), lesson4);
             course2.getLessons().put(lesson5.getLessonNumber(), lesson5);
             course2.getQuizzes().add(quiz3);
