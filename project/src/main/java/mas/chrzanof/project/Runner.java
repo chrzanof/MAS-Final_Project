@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import mas.chrzanof.project.model.Answer;
 import mas.chrzanof.project.model.Course;
@@ -46,7 +47,8 @@ public class Runner {
                                  CourseRepository courseRepository,
                                  LessonRepository lessonRepository,
                                  CourseService courseService,
-                                 EnrollmentService enrollmentService) {
+                                 EnrollmentService enrollmentService,
+                                 PasswordEncoder passwordEncoder) {
         return args -> {
             
             Person john = new Person();
@@ -54,7 +56,7 @@ public class Runner {
             john.setSurname("Doe");
             john.setEmail("john.doe@example.com");
             john.setPhoneNumber(123456789);
-            john.setPassword("password123");
+            john.setPassword(passwordEncoder.encode("password123"));
             john.setLanguagesKnown(Arrays.asList("English", "Spanish"));
             personRepository.save(john);
 
@@ -63,7 +65,7 @@ public class Runner {
             alice.setSurname("Smith");
             alice.setEmail("alice.smith@example.com");
             alice.setPhoneNumber(987654321);
-            alice.setPassword("password456");
+            alice.setPassword(passwordEncoder.encode("password456"));
             alice.setLanguagesKnown(Arrays.asList("English", "French", "German"));
             personRepository.save(alice);
 
@@ -72,7 +74,7 @@ public class Runner {
             bob.setSurname("Johnson");
             bob.setEmail("bob.johnson@example.com");
             bob.setPhoneNumber(555555555);
-            bob.setPassword("password789");
+            bob.setPassword(passwordEncoder.encode("password789"));
             bob.setLanguagesKnown(Arrays.asList("English", "Polish"));
             personRepository.save(bob);
 

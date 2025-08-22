@@ -1,4 +1,7 @@
-<script lang="ts">
+<script>
+import axios from 'axios'
+import authService from '../services/authService.js'
+
 export default {
   data() {
     return {
@@ -6,26 +9,27 @@ export default {
       selectedCourse: 0
     }
   },
-  mounted() {
+  async mounted() {
+    // Redirect if not authenticated
+    const isAuthenticated = await authService.checkAuthStatus()
+    if (!isAuthenticated) {
+      this.$router.push('/')
+      return
+    }
+    
     this.fetchCourses();
   },
   methods: {
     async fetchCourses() {
       try {
-        const response = await fetch("http://localhost:8080/api/courses", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json"
-          }
-        });
-        const data = await response.json();
-        this.courses = data;
-        console.log(this.courses);
+        const response = await axios.get("http://localhost:8080/api/courses")
+        this.courses = response.data
+        console.log(this.courses)
       } catch (error) {
-        console.error('Error fetching courses:', error);
+        console.error('Error fetching courses:', error)
       }
     },
-    selectCourse(courseIndex: number) {
+    selectCourse(courseIndex) {
       this.selectedCourse = courseIndex;
     }
   }

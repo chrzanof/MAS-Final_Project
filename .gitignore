@@ -40,6 +40,7 @@ frontend/coverage
 # Production
 frontend/build
 frontend/dist
+frontend/node_modules
 
 # Misc
 .DS_Store
