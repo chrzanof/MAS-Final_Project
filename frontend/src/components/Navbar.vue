@@ -56,10 +56,8 @@ export default {
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <router-link to="/" class="nav-link">Home</router-link>
-            </li>
-            <li class="nav-item" v-if="user">
-              <router-link to="/courses" class="nav-link">Browse Courses</router-link>
+              <router-link to="/" class="nav-link" v-if="!user">Home</router-link>
+              <router-link to="/courses" class="nav-link" v-if="user">Browse Courses</router-link>
             </li>
             <li class="nav-item" v-if="user && user.teacher">
               <router-link to="/my-courses" class="nav-link">My Courses</router-link>
