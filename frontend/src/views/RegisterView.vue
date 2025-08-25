@@ -10,16 +10,13 @@ export default {
       phoneNumber: '',
       password: '',
       repeatPassword: '',
+      isTeacher: false,
       error: '',
       loading: false
     }
   },
-  async mounted() {
-    // Check if user is already logged in and redirect to courses
-    const isAuthenticated = await authService.checkAuthStatus()
-    if (isAuthenticated) {
-      this.$router.push('/courses')
-    }
+  mounted() {
+    // Component mounted - route guard handles auth redirects
   },
   methods: {
     async register() {
@@ -41,7 +38,8 @@ export default {
         surname: this.surname,
         email: this.email,
         password: this.password,
-        phoneNumber: this.phoneNumber ? parseInt(this.phoneNumber) : null
+        phoneNumber: this.phoneNumber ? parseInt(this.phoneNumber) : null,
+        isTeacher: this.isTeacher
       }
 
       const result = await authService.register(userData)
@@ -140,6 +138,18 @@ export default {
                                         placeholder="Repeat Password"
                                         required 
                                     />
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input 
+                                        v-model="isTeacher"
+                                        type="checkbox" 
+                                        class="form-check-input" 
+                                        id="isTeacher"
+                                    />
+                                    <label class="form-check-label" for="isTeacher">
+                                        Register as Teacher
+                                    </label>
                                 </div>
 
                                 <button 

@@ -1,14 +1,5 @@
 <script>
-import authService from '../services/authService.js'
-
 export default {
-  async mounted() {
-    // Check if user is already logged in and redirect to courses
-    const isAuthenticated = await authService.checkAuthStatus()
-    if (isAuthenticated) {
-      this.$router.push('/courses')
-    }
-  },
   methods: {
     goToLogin() {
       this.$router.push('/login')

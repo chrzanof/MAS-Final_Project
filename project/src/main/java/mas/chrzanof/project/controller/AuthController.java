@@ -70,7 +70,19 @@ public class AuthController {
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("userId") != null) {
             UserResponse user = (UserResponse) session.getAttribute("user");
-            return ResponseEntity.ok().body(user);
+            
+            // If user object is missing from session, rebuild it from userId
+            if (user == null) {
+                Long userId = (Long) session.getAttribute("userId");
+                user = authService.getCurrentUser(userId);
+                if (user != null) {
+                    session.setAttribute("user", user);
+                }
+            }
+            
+            if (user != null) {
+                return ResponseEntity.ok().body(user);
+            }
         }
         return ResponseEntity.status(401).body("Not authenticated");
     }

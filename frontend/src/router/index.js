@@ -4,6 +4,7 @@ import CoursesView from '../views/CoursesView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import authService from '../services/authService.js'
+import MyCoursersView from '../views/MyCoursersView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,6 +18,12 @@ const router = createRouter({
       path: '/courses',
       name: 'courses',
       component: CoursesView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/my-courses',
+      name: 'my-courses',
+      component: MyCoursersView,
       meta: { requiresAuth: true }
     },
     {
@@ -44,10 +51,19 @@ router.beforeEach(async (to, from, next) => {
     return
   }
 
-  // If user is authenticated and trying to access login/register, redirect to courses
-  if (to.meta.redirectIfAuth && isAuthenticated) {
+  // If user is authenticated and trying to access login/register/home, redirect to courses
+  if ((to.meta.redirectIfAuth || to.path === '/') && isAuthenticated) {
     next('/courses')
     return
+  }
+
+  // If trying to access my-courses and user is not a teacher
+  if (to.path === '/my-courses' && isAuthenticated) {
+    const user = authService.getUser()
+    if (!user || !user.teacher) {
+      next('/courses') // Redirect non-teachers to browse courses
+      return
+    }
   }
 
   next()

@@ -1,25 +1,41 @@
 package mas.chrzanof.project.controller;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import mas.chrzanof.project.dto.CourseDTO;
 import mas.chrzanof.project.model.Course;
 import mas.chrzanof.project.model.Lesson;
+import mas.chrzanof.project.model.Person;
 import mas.chrzanof.project.model.Quiz;
+import mas.chrzanof.project.model.Teacher;
+import mas.chrzanof.project.repository.PersonRepository;
 import mas.chrzanof.project.service.CourseService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/courses")
 public class CourseController {
 
     private final CourseService courseService;
+    private final PersonRepository personRepository;
 
     @Autowired
-    public CourseController(CourseService courseService) {
+    public CourseController(CourseService courseService, PersonRepository personRepository) {
         this.courseService = courseService;
+        this.personRepository = personRepository;
     }
 
     @PostMapping
@@ -44,6 +60,32 @@ public class CourseController {
     @GetMapping
     public ResponseEntity<List<CourseDTO>> getAllCourses() {
         return ResponseEntity.ok(courseService.getAllCourses());
+    }
+
+    @GetMapping("/my-courses")
+    public ResponseEntity<List<CourseDTO>> getMyCourses(HttpServletRequest request) {
+        // Get current user from session
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        Long userId = (Long) session.getAttribute("userId");
+        Optional<Person> personOpt = personRepository.findById(userId);
+        
+        if (personOpt.isEmpty()) {
+            return ResponseEntity.status(404).build();
+        }
+
+        Person person = personOpt.get();
+        Teacher teacher = person.getTeacher();
+        
+        if (teacher == null) {
+            return ResponseEntity.status(403).build();
+        }
+
+        List<CourseDTO> courses = courseService.getCoursesByTeacherInCharge(teacher);
+        return ResponseEntity.ok(courses);
     }
 
     @GetMapping("/{id}")

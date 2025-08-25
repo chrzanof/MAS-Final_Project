@@ -10,13 +10,18 @@ import mas.chrzanof.project.dto.LoginRequest;
 import mas.chrzanof.project.dto.RegisterRequest;
 import mas.chrzanof.project.dto.UserResponse;
 import mas.chrzanof.project.model.Person;
+import mas.chrzanof.project.model.Teacher;
 import mas.chrzanof.project.repository.PersonRepository;
+import mas.chrzanof.project.repository.TeacherRepository;
 
 @Service
 public class AuthService {
 
     @Autowired
     private PersonRepository personRepository;
+
+    @Autowired
+    private TeacherRepository teacherRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -27,12 +32,16 @@ public class AuthService {
         if (personOpt.isPresent()) {
             Person person = personOpt.get();
             if (passwordEncoder.matches(loginRequest.getPassword(), person.getPassword())) {
+                // Check if person is a teacher by looking up in teacher repository
+                boolean isTeacher = teacherRepository.findByPersonId(person.getId()) != null;
+                
                 return new UserResponse(
                     person.getId(),
                     person.getName(),
                     person.getSurname(),
                     person.getEmail(),
-                    person.getPhoneNumber()
+                    person.getPhoneNumber(),
+                    isTeacher
                 );
             }
         }
@@ -53,12 +62,25 @@ public class AuthService {
 
         Person savedPerson = personRepository.save(person);
 
+        // Create Teacher entity if requested
+        if (registerRequest.isTeacher()) {
+            Teacher teacher = new Teacher();
+            teacher.setPerson(savedPerson);
+            Teacher savedTeacher = teacherRepository.save(teacher);
+            savedPerson.setTeacher(savedTeacher);
+            savedPerson = personRepository.save(savedPerson);
+        }
+
+        // Check if person is a teacher by looking up in teacher repository
+        boolean isTeacher = teacherRepository.findByPersonId(savedPerson.getId()) != null;
+        
         return new UserResponse(
             savedPerson.getId(),
             savedPerson.getName(),
             savedPerson.getSurname(),
             savedPerson.getEmail(),
-            savedPerson.getPhoneNumber()
+            savedPerson.getPhoneNumber(),
+            isTeacher
         );
     }
 
@@ -66,12 +88,16 @@ public class AuthService {
         Optional<Person> personOpt = personRepository.findById(userId);
         if (personOpt.isPresent()) {
             Person person = personOpt.get();
+            // Check if person is a teacher by looking up in teacher repository
+            boolean isTeacher = teacherRepository.findByPersonId(person.getId()) != null;
+            
             return new UserResponse(
                 person.getId(),
                 person.getName(),
                 person.getSurname(),
                 person.getEmail(),
-                person.getPhoneNumber()
+                person.getPhoneNumber(),
+                isTeacher
             );
         }
         return null;

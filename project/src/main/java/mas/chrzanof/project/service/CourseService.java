@@ -182,4 +182,10 @@ public class CourseService {
     public boolean isTeacherInCharge(Course course, Teacher teacher) {
         return course.getTeacherInCharge() != null && course.getTeacherInCharge().equals(teacher);
     }
+
+    public List<CourseDTO> getCoursesByTeacherInCharge(Teacher teacher) {
+        return teacher.getCoursesInCharge().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
 } 

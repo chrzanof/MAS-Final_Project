@@ -10,6 +10,24 @@ export default {
   },
   async mounted() {
     await this.checkAuthStatus()
+    
+    // Listen for user state changes from AuthService
+    this.userChangeListener = (user) => {
+      this.user = user
+    }
+    authService.addUserChangeListener(this.userChangeListener)
+  },
+  beforeUnmount() {
+    // Clean up listener
+    if (this.userChangeListener) {
+      authService.removeUserChangeListener(this.userChangeListener)
+    }
+  },
+  watch: {
+    // Watch for route changes and update auth status
+    '$route'() {
+      this.checkAuthStatus()
+    }
   },
   methods: {
     async checkAuthStatus() {
@@ -20,7 +38,6 @@ export default {
       this.loading = true
       const success = await authService.logout()
       if (success) {
-        this.user = null
         this.$router.push('/')
       }
       this.loading = false
@@ -43,6 +60,9 @@ export default {
             </li>
             <li class="nav-item" v-if="user">
               <router-link to="/courses" class="nav-link">Browse Courses</router-link>
+            </li>
+            <li class="nav-item" v-if="user && user.teacher">
+              <router-link to="/my-courses" class="nav-link">My Courses</router-link>
             </li>
           </ul>
           <ul class="navbar-nav">

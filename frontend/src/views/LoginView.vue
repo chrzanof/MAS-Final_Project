@@ -10,12 +10,8 @@ export default {
       loading: false
     }
   },
-  async mounted() {
-    // Check if user is already logged in and redirect to courses
-    const isAuthenticated = await authService.checkAuthStatus()
-    if (isAuthenticated) {
-      this.$router.push('/courses')
-    }
+  mounted() {
+    // Component mounted - route guard handles auth redirects
   },
   methods: {
     async login() {

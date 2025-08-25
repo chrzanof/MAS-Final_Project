@@ -1,22 +1,16 @@
 <script>
 import axios from 'axios'
-import authService from '../services/authService.js'
 
 export default {
   data() {
     return {
       courses: [],
-      selectedCourse: 0
+      selectedCourse: 0,
+      searchQuery: '',
+      filteredCourses: []
     }
   },
-  async mounted() {
-    // Redirect if not authenticated
-    const isAuthenticated = await authService.checkAuthStatus()
-    if (!isAuthenticated) {
-      this.$router.push('/')
-      return
-    }
-    
+  mounted() {
     this.fetchCourses();
   },
   methods: {
@@ -24,10 +18,19 @@ export default {
       try {
         const response = await axios.get("http://localhost:8080/api/courses")
         this.courses = response.data
+        this.filteredCourses = this.courses
         console.log(this.courses)
       } catch (error) {
         console.error('Error fetching courses:', error)
       }
+    },
+    async searchCourses() {
+      
+      if (this.searchQuery === '') {
+        this.filteredCourses = this.courses
+        return
+      }
+      this.filteredCourses = this.courses.filter(course => course.title.includes(this.searchQuery) || course.description.includes(this.searchQuery))
     },
     selectCourse(courseIndex) {
       this.selectedCourse = courseIndex;
@@ -38,17 +41,22 @@ export default {
 
 <template>
   <div class="row">
-    <div class="col-md-6">
+    <!-- add a search bar -->
+    <div class="col-md-12">
+      <input type="text" class="form-control" placeholder="Search courses" v-model="searchQuery" @input="searchCourses">
+    </div>
+    <div class="col-md-12">
       <table class="table table-hover" id="courses-table">
         <thead>
           <tr>
             <th>Course Name</th>
+            <th>Title</th>
             <th>Description</th>
           </tr>
         </thead>
         <tbody>
-          <template v-if="courses">
-            <tr v-for="(course, index) in courses" :key="index" @click="selectCourse(index)" :class="{ 'table-active': selectedCourse == index }">
+          <template v-if="filteredCourses">
+            <tr v-for="(course, index) in filteredCourses" :key="index" @click="selectCourse(index)" :class="{ 'table-active': selectedCourse == index }">
               <td>{{ course.id }}</td>
               <td>{{ course.title }}</td>
               <td>{{ course.description }}</td>
@@ -56,50 +64,6 @@ export default {
           </template>
         </tbody>
       </table>
-    </div>
-    
-    <div class="col-md-6">
-      <div class="row mb-4">
-        <div class="col-12">
-          <table class="table" id="lessons-table">
-            <thead>
-              <tr>
-                <th>Lesson Name</th>
-                <th>Content</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-if="courses && courses[selectedCourse]">
-                <tr v-for="lesson in courses[selectedCourse].lessons" :key="lesson.id">
-                  <td>{{ lesson.title }}</td>
-                  <td>{{ lesson.content }}</td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      
-      <div class="row">
-        <div class="col-12">
-          <table class="table" id="quizzes-table">
-            <thead>
-              <tr>
-                <th>Quiz Name</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-if="courses && courses[selectedCourse]">
-                <tr v-for="quiz in courses[selectedCourse].quizzes" :key="quiz.id">
-                  <td>{{ quiz.title }}</td>
-                  <td>{{ quiz.description }}</td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
   </div>
 </template>
