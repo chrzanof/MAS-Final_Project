@@ -15,7 +15,9 @@ export default {
       },
       questions: [],
       loading: false,
-      error: ''
+      error: '',
+      showSuccessConfirmation: false,
+      createdQuiz: null
     }
   },
   watch: {
@@ -141,10 +143,12 @@ export default {
           ...quizData
         }
         
+        // Store created quiz and show success confirmation
+        this.createdQuiz = mockResponse
+        this.showSuccessConfirmation = true
+        
         // Emit success event with the mock created quiz
         this.$emit('quizCreated', mockResponse)
-        this.resetForm()
-        this.$emit('close')
         
       } catch (error) {
         console.error('Error creating quiz:', error)
@@ -161,9 +165,17 @@ export default {
       }
       this.initializeQuestions()
       this.error = ''
+      this.showSuccessConfirmation = false
+      this.createdQuiz = null
     },
     
     closeModal() {
+      this.resetForm()
+      this.$emit('close')
+    },
+    
+    onSuccessOk() {
+      // Close the modal after success acknowledgment
       this.resetForm()
       this.$emit('close')
     }
@@ -176,17 +188,39 @@ export default {
     <div class="modal-dialog modal-xl">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="staticBackdropLabel">Create New Quiz</h1>
+          <h1 class="modal-title fs-5" id="staticBackdropLabel">
+            {{ showSuccessConfirmation ? 'Quiz Created Successfully' : 'Create New Quiz' }}
+          </h1>
           <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
         </div>
         
         <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
-          <!-- Error Alert -->
-          <div v-if="error" class="alert alert-danger" role="alert">
-            {{ error }}
+          <!-- Success Confirmation -->
+          <div v-if="showSuccessConfirmation">
+            <div class="alert alert-success text-center" role="alert">
+              <h4 class="alert-heading mb-1">Success!</h4>
+              <p class="mb-0">Quiz has been saved!</p>
+            </div>
+            
+            <div class="text-center">
+              <button 
+                type="button" 
+                class="btn btn-primary px-4"
+                @click="onSuccessOk"
+              >
+                OK
+              </button>
+            </div>
           </div>
           
-          <form @submit.prevent="createQuiz">
+          <!-- Quiz Creation Form -->
+          <div v-else>
+            <!-- Error Alert -->
+            <div v-if="error" class="alert alert-danger" role="alert">
+              {{ error }}
+            </div>
+            
+            <form @submit.prevent="createQuiz">
             <!-- Basic Quiz Info -->
             <div class="row mb-4">
               <div class="col-md-8">
@@ -322,10 +356,12 @@ export default {
                 </div>
               </div>
             </div>
-          </form>
+            </form>
+          </div>
         </div>
         
-        <div class="modal-footer">
+        <!-- Modal Footer - only show during form creation -->
+        <div class="modal-footer" v-if="!showSuccessConfirmation">
           <button 
             type="button" 
             class="btn btn-secondary" 

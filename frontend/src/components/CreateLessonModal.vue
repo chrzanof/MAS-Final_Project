@@ -125,10 +125,9 @@ export default {
     },
     
     onQuizCreated(quiz) {
-      // Quiz was created successfully
+      // Quiz was created successfully - let the quiz modal handle its own success flow
       console.log('Quiz created:', quiz)
-      this.resetForm()
-      this.$emit('close')
+      // Don't close immediately, let the quiz modal show success confirmation
     },
     
     onQuizModalClose() {
