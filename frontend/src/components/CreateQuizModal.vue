@@ -12,6 +12,7 @@ export default {
     return {
       form: {
         title: '',
+        description: '',
         numberOfQuestions: 1
       },
       questions: [],
@@ -36,7 +37,8 @@ export default {
         content: '',
         options: ['', ''],
         correctOption: 0,
-        answer: ''
+        answer: '',
+        points: 1
       }]
     },
     
@@ -51,7 +53,8 @@ export default {
             content: '',
             options: ['', ''],
             correctOption: 0,
-            answer: ''
+            answer: '',
+            points: 1
           })
         }
       } else if (numberOfQuestions < currentLength) {
@@ -90,6 +93,10 @@ export default {
           return `Question ${i + 1} content is required`
         }
         
+        if (question.points === null || question.points === undefined || question.points < 0) {
+          return `Question ${i + 1} points must be 0 or greater`
+        }
+        
         if (question.type === 'multichoice') {
           const validOptions = question.options.filter(opt => opt.trim())
           if (validOptions.length < 2) {
@@ -121,12 +128,12 @@ export default {
       try {
         const quizData = {
           title: this.form.title.trim(),
-          description: '', // Can add description field if needed
+          description: this.form.description.trim(),
           courseId: this.courseId,
           positionIndex: Date.now() % 1000,
           questions: this.questions.map((q, index) => ({
             text: q.content.trim(),
-            points: 1, // Default points
+            points: q.points,
             positionIndex: index,
             type: q.type,
             ...(q.type === 'multichoice' ? {
@@ -162,6 +169,7 @@ export default {
     resetForm() {
       this.form = {
         title: '',
+        description: '',
         numberOfQuestions: 1
       }
       this.initializeQuestions()
@@ -223,7 +231,7 @@ export default {
             
             <form @submit.prevent="createQuiz">
             <!-- Basic Quiz Info -->
-            <div class="row mb-4">
+            <div class="row mb-3">
               <div class="col-md-8">
                 <label for="quizTitle" class="form-label">Quiz Title <span class="text-danger">*</span></label>
                 <input 
@@ -251,6 +259,18 @@ export default {
               </div>
             </div>
             
+            <div class="mb-4">
+              <label for="quizDescription" class="form-label">Quiz Description</label>
+              <textarea 
+                class="form-control" 
+                id="quizDescription" 
+                v-model="form.description"
+                placeholder="Enter quiz description (optional)"
+                rows="3"
+                :disabled="loading"
+              ></textarea>
+            </div>
+            
             <hr>
             
             <!-- Questions Section -->
@@ -265,15 +285,29 @@ export default {
                 <div class="card-header">
                   <div class="d-flex justify-content-between align-items-center">
                     <h6 class="mb-0">Question {{ questionIndex + 1 }}</h6>
-                    <select 
-                      class="form-select form-select-sm" 
-                      style="width: auto;"
-                      v-model="question.type"
-                      :disabled="loading"
-                    >
-                      <option value="multichoice">Multiple Choice</option>
-                      <option value="open">Open Question</option>
-                    </select>
+                    <div class="d-flex gap-2 align-items-center">
+                      <div class="d-flex align-items-center">
+                        <label class="form-label mb-0 me-2 small">Points:</label>
+                        <input 
+                          type="number" 
+                          class="form-control form-control-sm" 
+                          style="width: 70px;"
+                          v-model.number="question.points"
+                          min="0"
+                          :disabled="loading"
+                          required
+                        >
+                      </div>
+                      <select 
+                        class="form-select form-select-sm" 
+                        style="width: auto;"
+                        v-model="question.type"
+                        :disabled="loading"
+                      >
+                        <option value="multichoice">Multiple Choice</option>
+                        <option value="open">Open Question</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
                 
