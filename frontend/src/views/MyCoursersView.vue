@@ -129,8 +129,8 @@ export default {
     </div>
 
     <CreateCourseModal v-if="showCreateModal && createModalType === 'course'" @close="showCreateModal = false"/>
-    <CreateLessonModal v-if="showCreateModal && createModalType === 'lesson'" @close="showCreateModal = false"/>
-    <CreateQuizModal v-if="showCreateModal && createModalType === 'quiz'" @close="showCreateModal = false"/>
+    <CreateLessonModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'lesson'" @close="showCreateModal = false"/>
+    <CreateQuizModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'quiz'" @close="showCreateModal = false"/>
   </div>
 </template>
 
