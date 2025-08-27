@@ -1,5 +1,10 @@
 <script>
+import CreateQuizModal from './CreateQuizModal.vue'
+
 export default {
+  components: {
+    CreateQuizModal
+  },
   props: {
     courseId: {
       type: Number,
@@ -15,7 +20,10 @@ export default {
         content: ''
       },
       loading: false,
-      error: ''
+      error: '',
+      showSuccessConfirmation: false,
+      createdLesson: null,
+      showQuizModal: false
     }
   },
   methods: {
@@ -52,10 +60,12 @@ export default {
           ...lessonData
         }
         
+        // Store created lesson and show success confirmation
+        this.createdLesson = mockResponse
+        this.showSuccessConfirmation = true
+        
         // Emit success event with the mock created lesson
         this.$emit('lessonCreated', mockResponse)
-        this.resetForm()
-        this.$emit('close')
         
       } catch (error) {
         console.error('Error creating lesson:', error)
@@ -72,9 +82,42 @@ export default {
         content: ''
       }
       this.error = ''
+      this.showSuccessConfirmation = false
+      this.createdLesson = null
+      this.showQuizModal = false
     },
     
     closeModal() {
+      this.resetForm()
+      this.$emit('close')
+    },
+    
+    onCreateAnotherLessonYes() {
+      // Reset form to create another lesson but keep modal open
+      this.form = {
+        title: '',
+        description: '',
+        content: ''
+      }
+      this.showSuccessConfirmation = false
+      this.createdLesson = null
+      this.error = ''
+    },
+    
+    onCreateAnotherLessonNo() {
+      // Transition to quiz creation
+      this.showSuccessConfirmation = false
+      this.showQuizModal = true
+    },
+    
+    onQuizCreated(quiz) {
+      // Quiz was created successfully
+      console.log('Quiz created:', quiz)
+      this.resetForm()
+      this.$emit('close')
+    },
+    
+    onQuizModalClose() {
       this.resetForm()
       this.$emit('close')
     }
@@ -87,16 +130,48 @@ export default {
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">Create New Lesson</h1>
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">
+          {{ showSuccessConfirmation ? 'Lesson Created Successfully' : 'Create New Lesson' }}
+        </h1>
         <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- Error Alert -->
-        <div v-if="error" class="alert alert-danger" role="alert">
-          {{ error }}
+        <!-- Success Confirmation -->
+        <div v-if="showSuccessConfirmation">
+          <div class="alert alert-success text-center" role="alert">
+            <h4 class="alert-heading mb-1">Success!</h4>
+            <p class="mb-0">Lesson has been saved!</p>
+          </div>
+          
+          <div class="text-center">
+            <h5 class="mb-3">Would you like to create another lesson?</h5>
+            <div class="d-flex justify-content-center gap-3">
+              <button 
+                type="button" 
+                class="btn btn-secondary px-4"
+                @click="onCreateAnotherLessonNo"
+              >
+                No
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-primary px-4"
+                @click="onCreateAnotherLessonYes"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
         </div>
         
-        <form @submit.prevent="createLesson">
+        <!-- Lesson Creation Form -->
+        <div v-else>
+          <!-- Error Alert -->
+          <div v-if="error" class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+          
+          <form @submit.prevent="createLesson">
           <div class="mb-3">
             <label for="lessonTitle" class="form-label">Lesson Title <span class="text-danger">*</span></label>
             <input 
@@ -136,9 +211,12 @@ export default {
             ></textarea>
             <div class="form-text">Provide detailed lesson content, instructions, and materials</div>
           </div>
-        </form>
+          </form>
+        </div>
       </div>
-      <div class="modal-footer">
+      
+      <!-- Modal Footer - only show during form creation -->
+      <div class="modal-footer" v-if="!showSuccessConfirmation">
         <button 
           type="button" 
           class="btn btn-secondary" 
@@ -160,6 +238,14 @@ export default {
     </div>
   </div>
 </div>
+
+<!-- Quiz Creation Modal -->
+<CreateQuizModal 
+  v-if="showQuizModal"
+  :courseId="courseId"
+  @close="onQuizModalClose"
+  @quizCreated="onQuizCreated"
+/>
 </template>
 
 <style scoped>

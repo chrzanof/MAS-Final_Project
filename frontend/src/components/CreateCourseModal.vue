@@ -1,7 +1,11 @@
 <script>
 import axios from 'axios'
+import CreateLessonModal from './CreateLessonModal.vue'
 
 export default {
+  components: {
+    CreateLessonModal
+  },
   emits: ['close', 'courseCreated'],
   data() {
     return {
@@ -12,7 +16,10 @@ export default {
         availableTo: ''
       },
       loading: false,
-      error: ''
+      error: '',
+      showSuccessConfirmation: false,
+      createdCourse: null,
+      showLessonModal: false
     }
   },
   methods: {
@@ -60,10 +67,12 @@ export default {
           ...courseData
         }
         
+        // Store created course and show success confirmation
+        this.createdCourse = mockResponse
+        this.showSuccessConfirmation = true
+        
         // Emit success event with the mock created course
         this.$emit('courseCreated', mockResponse)
-        this.resetForm()
-        this.$emit('close')
         
       } catch (error) {
         console.error('Error creating course:', error)
@@ -81,9 +90,33 @@ export default {
         availableTo: ''
       }
       this.error = ''
+      this.showSuccessConfirmation = false
+      this.createdCourse = null
+      this.showLessonModal = false
     },
     
     closeModal() {
+      this.resetForm()
+      this.$emit('close')
+    },
+    
+    onCreateLessonYes() {
+      this.showSuccessConfirmation = false
+      this.showLessonModal = true
+    },
+    
+    onCreateLessonNo() {
+      this.resetForm()
+      this.$emit('close')
+    },
+    
+    onLessonCreated(lesson) {
+      // Lesson was created successfully - let the lesson modal handle its own flow
+      console.log('Lesson created:', lesson)
+      // Don't close immediately, let the lesson modal show success confirmation
+    },
+    
+    onLessonModalClose() {
       this.resetForm()
       this.$emit('close')
     }
@@ -96,16 +129,48 @@ export default {
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">Create New Course</h1>
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">
+          {{ showSuccessConfirmation ? 'Course Created Successfully' : 'Create New Course' }}
+        </h1>
         <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- Error Alert -->
-        <div v-if="error" class="alert alert-danger" role="alert">
-          {{ error }}
+        <!-- Success Confirmation -->
+        <div v-if="showSuccessConfirmation">
+          <div class="alert alert-success text-center" role="alert">
+            <h4 class="alert-heading mb-1">Success!</h4>
+            <p class="mb-0">Course has been saved!</p>
+          </div>
+          
+          <div class="text-center">
+            <h5 class="mb-3">Would you like to create first lesson?</h5>
+            <div class="d-flex justify-content-center gap-3">
+              <button 
+                type="button" 
+                class="btn btn-secondary px-4"
+                @click="onCreateLessonNo"
+              >
+                No
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-primary px-4"
+                @click="onCreateLessonYes"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
         </div>
         
-        <form @submit.prevent="createCourse">
+        <!-- Course Creation Form -->
+        <div v-else>
+          <!-- Error Alert -->
+          <div v-if="error" class="alert alert-danger" role="alert">
+            {{ error }}
+          </div>
+          
+          <form @submit.prevent="createCourse">
           <div class="mb-3">
             <label for="courseTitle" class="form-label">Course Title <span class="text-danger">*</span></label>
             <input 
@@ -159,9 +224,12 @@ export default {
             >
              <div class="form-text">Select when the course expires</div>
           </div>
-        </form>
+          </form>
+        </div>
       </div>
-      <div class="modal-footer">
+      
+      <!-- Modal Footer - only show during form creation -->
+      <div class="modal-footer" v-if="!showSuccessConfirmation">
         <button 
           type="button" 
           class="btn btn-secondary" 
@@ -183,6 +251,14 @@ export default {
     </div>
   </div>
 </div>
+
+<!-- Lesson Creation Modal -->
+<CreateLessonModal 
+  v-if="showLessonModal"
+  :courseId="createdCourse?.id"
+  @close="onLessonModalClose"
+  @lessonCreated="onLessonCreated"
+/>
 </template>
 
 <style scoped>
