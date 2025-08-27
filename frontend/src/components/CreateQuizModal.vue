@@ -143,17 +143,17 @@ export default {
         //   id: Date.now(),
         //   ...quizData
         // }
-        const response = await axios.post(`http://localhost:8080/api/courses/${this.courseId}/lessons`, quizData)
+        const response = await axios.post(`http://localhost:8080/api/courses/${this.courseId}/quizzes`, quizData)
         // Store created quiz and show success confirmation
         this.createdQuiz = response.data
         this.showSuccessConfirmation = true
         
-        // Emit success event with the mock created quiz
-        this.$emit('quizCreated', mockResponse)
+        // Emit success event with the created quiz
+        this.$emit('quizCreated', response.data)
         
       } catch (error) {
         console.error('Error creating quiz:', error)
-        this.error = 'Failed to create quiz. Please try again.'
+        this.error = error.response?.data || 'Failed to create quiz. Please try again.'
       } finally {
         this.loading = false
       }

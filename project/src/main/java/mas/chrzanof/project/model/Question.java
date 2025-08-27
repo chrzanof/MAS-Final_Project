@@ -3,6 +3,9 @@ package mas.chrzanof.project.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +27,15 @@ import lombok.Setter;
 @Entity
 @Table(name = "questions")
 @Inheritance(strategy = InheritanceType.JOINED)
+@JsonTypeInfo(
+    use = JsonTypeInfo.Id.NAME,
+    include = JsonTypeInfo.As.PROPERTY,
+    property = "type"
+)
+@JsonSubTypes({
+    @JsonSubTypes.Type(value = MultichoiceQuestion.class, name = "multichoice"),
+    @JsonSubTypes.Type(value = OpenQuestion.class, name = "open")
+})
 @NoArgsConstructor
 @Getter
 @Setter

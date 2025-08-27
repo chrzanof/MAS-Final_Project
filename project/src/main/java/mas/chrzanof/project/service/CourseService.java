@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-import mas.chrzanof.project.repository.LessonRepository;
-import mas.chrzanof.project.repository.QuizRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +17,8 @@ import mas.chrzanof.project.model.Lesson;
 import mas.chrzanof.project.model.Quiz;
 import mas.chrzanof.project.model.Teacher;
 import mas.chrzanof.project.repository.CourseRepository;
+import mas.chrzanof.project.repository.LessonRepository;
+import mas.chrzanof.project.repository.QuizRepository;
 import mas.chrzanof.project.repository.TeacherRepository;
 
 @Service
@@ -101,6 +101,8 @@ public class CourseService {
     public Course addQuizToCourse(Long courseId, Quiz quiz) {
         Course course = getCourseById(courseId);
         quiz.setCourse(course);
+        // Set the quiz reference in all questions (important for bidirectional relationship)
+        quiz.getQuestions().forEach(question -> question.setQuiz(quiz));
         course.getQuizzes().add(quiz);
         quizRepository.save(quiz);
         return course;
