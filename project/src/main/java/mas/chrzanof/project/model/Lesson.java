@@ -24,6 +24,9 @@ public class Lesson {
     private String title;
 
     @Column(nullable = true)
+    private String description;
+
+    @Column(nullable = true)
     private String content;
 
     @Column(nullable = false)

@@ -1,16 +1,21 @@
 <script>
 import axios from 'axios'
 import CreateCourseModal from '@/components/CreateCourseModal.vue'; 
+import CreateLessonModal from '@/components/CreateLessonModal.vue';
+import CreateQuizModal from '@/components/CreateQuizModal.vue';
 
 export default {
   components: {
-    CreateCourseModal
+    CreateCourseModal,
+    CreateLessonModal,
+    CreateQuizModal
   },
   data() {
     return {
       courses: [],
       selectedCourse: 0,
-      showCreateModal: false
+      showCreateModal: false,
+      createModalType: null
     }
   },
   mounted() {
@@ -29,9 +34,10 @@ export default {
     selectCourse(courseIndex) {
       this.selectedCourse = courseIndex;
     },
-    toggleCreateModal() {
+    toggleCreateModal(type) {
       this.showCreateModal = !this.showCreateModal;
-    }
+      this.createModalType = type;
+    },
   }
 }
 </script>
@@ -44,11 +50,11 @@ export default {
       <table class="table table-hover" id="courses-table">
         <thead>
           <tr>
-            <th>Course Name</th>
+            <th>ID</th>
             <th>Title</th>
             <th>Description</th>
             <th>
-              <button type="button" class="btn btn-primary" @click="toggleCreateModal">
+              <button type="button" class="btn btn-primary" @click="toggleCreateModal('course')">
                 +
               </button>
             </th>
@@ -73,9 +79,9 @@ export default {
             <thead>
               <tr>
                 <th>Lesson Name</th>
-                <th>Content</th>
+                <th>Description</th>
                 <th>
-              <button type="button" class="btn btn-primary" @click="toggleCreateModal">
+              <button type="button" class="btn btn-primary" @click="toggleCreateModal('lesson')">
                 +
               </button>
             </th>
@@ -85,7 +91,8 @@ export default {
               <template v-if="courses && courses[selectedCourse]">
                 <tr v-for="lesson in courses[selectedCourse].lessons" :key="lesson.id">
                   <td>{{ lesson.title }}</td>
-                  <td>{{ lesson.content }}</td>
+                  <td v-if="lesson.description">{{ lesson.description }}</td>
+                  <td v-else>No description</td>
                 </tr>
               </template>
             </tbody>
@@ -101,7 +108,7 @@ export default {
                 <th>Quiz Name</th>
                 <th>Description</th>
                 <th>
-              <button type="button" class="btn btn-primary" @click="toggleCreateModal">
+              <button type="button" class="btn btn-primary" @click="toggleCreateModal('quiz')">
                 +
               </button>
             </th>
@@ -121,7 +128,9 @@ export default {
     </div>
     </div>
 
-    <CreateCourseModal v-if="showCreateModal" @close="showCreateModal = false"/>
+    <CreateCourseModal v-if="showCreateModal && createModalType === 'course'" @close="showCreateModal = false"/>
+    <CreateLessonModal v-if="showCreateModal && createModalType === 'lesson'" @close="showCreateModal = false"/>
+    <CreateQuizModal v-if="showCreateModal && createModalType === 'quiz'" @close="showCreateModal = false"/>
   </div>
 </template>
 

@@ -256,21 +256,21 @@ public class Runner {
             
             Lesson lesson1 = new Lesson();
             lesson1.setTitle("Introduction to English Grammar");
-            lesson1.setContent("In this lesson, we will cover the basics of English grammar, including parts of speech and sentence structure.");
+            lesson1.setDescription("In this lesson, we will cover the basics of English grammar, including parts of speech and sentence structure.");
             lesson1.setLessonNumber(1);
             lesson1.setCourse(englishCourse);
             lessonRepository.save(lesson1);
 
             Lesson lesson2 = new Lesson();
             lesson2.setTitle("Present Tense Verbs");
-            lesson2.setContent("Learn about different forms of present tense verbs and how to use them correctly in sentences.");
+            lesson2.setDescription("Learn about different forms of present tense verbs and how to use them correctly in sentences.");
             lesson2.setLessonNumber(2);
             lesson2.setCourse(englishCourse);
             lessonRepository.save(lesson2);
 
             Lesson lesson3 = new Lesson();
             lesson3.setTitle("Past Tense Verbs");
-            lesson3.setContent("Understanding regular and irregular past tense verbs, and when to use them.");
+            lesson3.setDescription("Understanding regular and irregular past tense verbs, and when to use them.");
             lesson3.setLessonNumber(3);
             lesson3.setCourse(englishCourse);
             lessonRepository.save(lesson3);

@@ -51,6 +51,7 @@ public class CourseService {
             lessonDTO.setId(lesson.getId());
             lessonDTO.setTitle(lesson.getTitle());
             lessonDTO.setContent(lesson.getContent());
+            lessonDTO.setDescription(lesson.getDescription());
             lessonDTO.setLessonNumber(lesson.getLessonNumber());
             lessonDTOs.put(number, lessonDTO);
         });
