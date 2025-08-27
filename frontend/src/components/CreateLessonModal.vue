@@ -22,6 +22,7 @@ export default {
       loading: false,
       error: '',
       showSuccessConfirmation: false,
+      showQuizConfirmation: false,
       createdLesson: null,
       showQuizModal: false
     }
@@ -83,6 +84,7 @@ export default {
       }
       this.error = ''
       this.showSuccessConfirmation = false
+      this.showQuizConfirmation = false
       this.createdLesson = null
       this.showQuizModal = false
     },
@@ -105,9 +107,21 @@ export default {
     },
     
     onCreateAnotherLessonNo() {
-      // Transition to quiz creation
+      // Show quiz confirmation
       this.showSuccessConfirmation = false
+      this.showQuizConfirmation = true
+    },
+    
+    onCreateQuizYes() {
+      // Transition to quiz creation
+      this.showQuizConfirmation = false
       this.showQuizModal = true
+    },
+    
+    onCreateQuizNo() {
+      // User doesn't want to create quiz, close modal
+      this.resetForm()
+      this.$emit('close')
     },
     
     onQuizCreated(quiz) {
@@ -131,7 +145,8 @@ export default {
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="staticBackdropLabel">
-          {{ showSuccessConfirmation ? 'Lesson Created Successfully' : 'Create New Lesson' }}
+          {{ showSuccessConfirmation ? 'Lesson Created Successfully' : 
+             showQuizConfirmation ? 'Create Quiz?' : 'Create New Lesson' }}
         </h1>
         <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
       </div>
@@ -157,6 +172,29 @@ export default {
                 type="button" 
                 class="btn btn-primary px-4"
                 @click="onCreateAnotherLessonYes"
+              >
+                Yes
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quiz Creation Confirmation -->
+        <div v-else-if="showQuizConfirmation">
+          <div class="text-center">
+            <h5 class="mb-3">Do you want to create quiz?</h5>
+            <div class="d-flex justify-content-center gap-3">
+              <button 
+                type="button" 
+                class="btn btn-secondary px-4"
+                @click="onCreateQuizNo"
+              >
+                No
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-primary px-4"
+                @click="onCreateQuizYes"
               >
                 Yes
               </button>
@@ -216,7 +254,7 @@ export default {
       </div>
       
       <!-- Modal Footer - only show during form creation -->
-      <div class="modal-footer" v-if="!showSuccessConfirmation">
+      <div class="modal-footer" v-if="!showSuccessConfirmation && !showQuizConfirmation">
         <button 
           type="button" 
           class="btn btn-secondary" 
