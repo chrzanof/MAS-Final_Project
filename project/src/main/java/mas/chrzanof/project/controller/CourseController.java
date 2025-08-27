@@ -23,6 +23,7 @@ import mas.chrzanof.project.model.Person;
 import mas.chrzanof.project.model.Quiz;
 import mas.chrzanof.project.model.Teacher;
 import mas.chrzanof.project.repository.PersonRepository;
+import mas.chrzanof.project.service.AuthService;
 import mas.chrzanof.project.service.CourseService;
 
 @RestController
@@ -30,17 +31,37 @@ import mas.chrzanof.project.service.CourseService;
 public class CourseController {
 
     private final CourseService courseService;
+
     private final PersonRepository personRepository;
 
+    private final AuthService authService;
+
     @Autowired
-    public CourseController(CourseService courseService, PersonRepository personRepository) {
+    public CourseController(CourseService courseService, PersonRepository personRepository, AuthService authService) {
         this.courseService = courseService;
         this.personRepository = personRepository;
+        this.authService = authService;
     }
 
     @PostMapping
-    public ResponseEntity<Course> createCourse(@RequestBody Course course) {
-        return ResponseEntity.ok(courseService.createCourse(course));
+    public ResponseEntity<Course> createCourse(@RequestBody Course course, HttpServletRequest request) {
+        
+        
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("userId") == null) {
+            return ResponseEntity.status(401).build();
+        }
+
+        Long userId = (Long) session.getAttribute("userId");
+        Person person = personRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        
+        Teacher teacher = person.getTeacher();
+        if (teacher == null) {
+            return ResponseEntity.status(403).build();
+        }
+        
+
+        return ResponseEntity.ok(courseService.createCourse(course, teacher));
     }
 
     @PostMapping("/{courseId}/lessons")

@@ -59,20 +59,14 @@ export default {
           availableTo: this.form.availableTo + 'T23:59:59' // Convert to datetime format
         }
 
-        // const response = await axios.post('http://localhost:8080/api/courses', courseData)
+        const response = await axios.post('http://localhost:8080/api/courses', courseData)
         
-        // For now, simulate a successful response
-        const mockResponse = {
-          id: Date.now(), // Use timestamp as mock ID
-          ...courseData
-        }
         
-        // Store created course and show success confirmation
-        this.createdCourse = mockResponse
+        this.createdCourse = response.data
         this.showSuccessConfirmation = true
         
         // Emit success event with the mock created course
-        this.$emit('courseCreated', mockResponse)
+        this.$emit('courseCreated', response.data)
         
       } catch (error) {
         console.error('Error creating course:', error)

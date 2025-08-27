@@ -74,7 +74,9 @@ public class CourseService {
     }
 
     @Transactional
-    public Course createCourse(Course course) {
+    public Course createCourse(Course course, Teacher teacher) {
+        course.getAssignedTeachers().add(teacher);
+        course.setTeacherInCharge(teacher);
         return courseRepository.save(course);
     }
 
