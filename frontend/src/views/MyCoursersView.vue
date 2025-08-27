@@ -1,11 +1,16 @@
 <script>
 import axios from 'axios'
+import CreateCourseModal from '@/components/CreateCourseModal.vue'; 
 
 export default {
+  components: {
+    CreateCourseModal
+  },
   data() {
     return {
       courses: [],
-      selectedCourse: 0
+      selectedCourse: 0,
+      showCreateModal: false
     }
   },
   mounted() {
@@ -23,13 +28,18 @@ export default {
     },
     selectCourse(courseIndex) {
       this.selectedCourse = courseIndex;
+    },
+    toggleCreateModal() {
+      this.showCreateModal = !this.showCreateModal;
     }
   }
 }
 </script>
 
 <template>
-  <div class="row">
+  <div>
+    
+    <div class="row">
     <div class="col-md-6">
       <table class="table table-hover" id="courses-table">
         <thead>
@@ -37,6 +47,11 @@ export default {
             <th>Course Name</th>
             <th>Title</th>
             <th>Description</th>
+            <th>
+              <button type="button" class="btn btn-primary" @click="toggleCreateModal">
+                +
+              </button>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -59,6 +74,11 @@ export default {
               <tr>
                 <th>Lesson Name</th>
                 <th>Content</th>
+                <th>
+              <button type="button" class="btn btn-primary" @click="toggleCreateModal">
+                +
+              </button>
+            </th>
               </tr>
             </thead>
             <tbody>
@@ -80,6 +100,11 @@ export default {
               <tr>
                 <th>Quiz Name</th>
                 <th>Description</th>
+                <th>
+              <button type="button" class="btn btn-primary" @click="toggleCreateModal">
+                +
+              </button>
+            </th>
               </tr>
             </thead>
             <tbody>
@@ -94,6 +119,9 @@ export default {
         </div>
       </div>
     </div>
+    </div>
+
+    <CreateCourseModal v-if="showCreateModal" @close="showCreateModal = false"/>
   </div>
 </template>
 
