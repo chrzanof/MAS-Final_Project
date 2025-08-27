@@ -43,91 +43,134 @@ export default {
 </script>
 
 <template>
-  <div>
-    
-    <div class="row">
-    <div class="col-md-6">
-      <table class="table table-hover" id="courses-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>
-              <button type="button" class="btn btn-primary" @click="toggleCreateModal('course')">
-                +
-              </button>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-if="courses">
-            <tr v-for="(course, index) in courses" :key="index" @click="selectCourse(index)" :class="{ 'table-active': selectedCourse == index }">
-              <td>{{ course.id }}</td>
-              <td>{{ course.title }}</td>
-              <td>{{ course.description }}</td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
-    
-    <div class="col-md-6">
-      <div class="row mb-4">
-        <div class="col-12">
-          <table class="table" id="lessons-table">
-            <thead>
-              <tr>
-                <th>Lesson Name</th>
-                <th>Description</th>
-                <th>
-              <button type="button" class="btn btn-primary" @click="toggleCreateModal('lesson')">
-                +
-              </button>
-            </th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-if="courses && courses[selectedCourse]">
-                <tr v-for="lesson in courses[selectedCourse].lessons" :key="lesson.id">
-                  <td>{{ lesson.title }}</td>
-                  <td v-if="lesson.description">{{ lesson.description }}</td>
-                  <td v-else>No description</td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
+  <div class="container-fluid py-4">
+    <div class="row g-4">
+      <!-- Courses Section -->
+      <div class="col-lg-6">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">My Courses</h5>
+            <button type="button" class="btn btn-light btn-sm" @click="toggleCreateModal('course')">
+              Add Course
+            </button>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover mb-0" id="courses-table">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col" class="text-center" style="width: 80px;">#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template v-if="courses && courses.length > 0">
+                    <tr v-for="(course, index) in courses" 
+                        :key="index" 
+                        @click="selectCourse(index)" 
+                        :class="{ 'table-active': selectedCourse == index }"
+                        style="cursor: pointer;">
+                      <td class="text-center fw-bold text-muted">{{ course.id }}</td>
+                      <td class="fw-semibold">{{ course.title }}</td>
+                      <td class="text-muted">{{ course.description }}</td>
+                    </tr>
+                  </template>
+                  <tr v-else>
+                    <td colspan="3" class="text-center text-muted py-4">
+                      <em>No courses available</em>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
       
-      <div class="row">
-        <div class="col-12">
-          <table class="table" id="quizzes-table">
-            <thead>
-              <tr>
-                <th>Quiz Name</th>
-                <th>Description</th>
-                <th>
-              <button type="button" class="btn btn-primary" @click="toggleCreateModal('quiz')">
-                +
-              </button>
-            </th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-if="courses && courses[selectedCourse]">
-                <tr v-for="quiz in courses[selectedCourse].quizzes" :key="quiz.id">
-                  <td>{{ quiz.title }}</td>
-                  <td>{{ quiz.description }}</td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
+      <!-- Lessons and Quizzes Section -->
+      <div class="col-lg-6">
+        <!-- Lessons -->
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Lessons</h5>
+            <button type="button" 
+                    class="btn btn-light btn-sm" 
+                    @click="toggleCreateModal('lesson')"
+                    :disabled="!courses || courses.length === 0">
+              Add Lesson
+            </button>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped mb-0" id="lessons-table">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">Lesson Name</th>
+                    <th scope="col">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template v-if="courses && courses[selectedCourse] && courses[selectedCourse].lessons && Object.keys(courses[selectedCourse].lessons).length > 0">
+                    <tr v-for="lesson in Object.values(courses[selectedCourse].lessons)" :key="lesson.id">
+                      <td class="fw-semibold">{{ lesson.title }}</td>
+                      <td class="text-muted">
+                        <span v-if="lesson.description">{{ lesson.description }}</span>
+                        <em v-else class="text-muted">No description</em>
+                      </td>
+                    </tr>
+                  </template>
+                  <tr v-else>
+                    <td colspan="2" class="text-center text-muted py-4">
+                      <em>{{ courses && courses.length > 0 ? 'No lessons available' : 'Select a course to view lessons' }}</em>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Quizzes -->
+        <div class="card shadow-sm">
+          <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Quizzes</h5>
+            <button type="button" 
+                    class="btn btn-light btn-sm" 
+                    @click="toggleCreateModal('quiz')"
+                    :disabled="!courses || courses.length === 0">
+              Add Quiz
+            </button>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped mb-0" id="quizzes-table">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">Quiz Name</th>
+                    <th scope="col">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template v-if="courses && courses[selectedCourse] && courses[selectedCourse].quizzes && Object.keys(courses[selectedCourse].quizzes).length > 0">
+                    <tr v-for="quiz in Object.values(courses[selectedCourse].quizzes)" :key="quiz.id">
+                      <td class="fw-semibold">{{ quiz.title }}</td>
+                      <td class="text-muted">{{ quiz.description }}</td>
+                    </tr>
+                  </template>
+                  <tr v-else>
+                    <td colspan="2" class="text-center text-muted py-4">
+                      <em>{{ courses && courses.length > 0 ? 'No quizzes available' : 'Select a course to view quizzes' }}</em>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    </div>
-
+    
     <CreateCourseModal v-if="showCreateModal && createModalType === 'course'" @close="showCreateModal = false"/>
     <CreateLessonModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'lesson'" @close="showCreateModal = false"/>
     <CreateQuizModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'quiz'" @close="showCreateModal = false"/>

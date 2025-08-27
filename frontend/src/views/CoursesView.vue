@@ -40,30 +40,92 @@ export default {
 </script>
 
 <template>
-  <div class="row">
-    <!-- add a search bar -->
-    <div class="col-md-12">
-      <input type="text" class="form-control" placeholder="Search courses" v-model="searchQuery" @input="searchCourses">
+  <div class="container-fluid py-4">
+    <!-- Search Section -->
+    <div class="row mb-4">
+      <div class="col-lg-6 mx-auto">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <div class="input-group input-group-lg">
+              <input 
+                type="text" 
+                class="form-control form-control-lg" 
+                placeholder="Search courses by title or description..." 
+                v-model="searchQuery" 
+                @input="searchCourses"
+              >
+              <button 
+                class="btn btn-outline-secondary" 
+                type="button" 
+                @click="searchQuery = ''; searchCourses()"
+                v-if="searchQuery"
+              >
+                Clear
+              </button>
+            </div>
+            <small class="text-muted mt-2 d-block" v-if="searchQuery">
+              Found {{ filteredCourses.length }} course(s) matching "{{ searchQuery }}"
+            </small>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="col-md-12">
-      <table class="table table-hover" id="courses-table">
-        <thead>
-          <tr>
-            <th>Course Name</th>
-            <th>Title</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-if="filteredCourses">
-            <tr v-for="(course, index) in filteredCourses" :key="index" @click="selectCourse(index)" :class="{ 'table-active': selectedCourse == index }">
-              <td>{{ course.id }}</td>
-              <td>{{ course.title }}</td>
-              <td>{{ course.description }}</td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
+
+    <!-- Courses Table Section -->
+    <div class="row">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              Available Courses 
+              <span class="badge bg-light text-primary ms-2">{{ filteredCourses.length }}</span>
+            </h5>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-striped table-hover mb-0" id="courses-table">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col" class="text-center" style="width: 80px;">#</th>
+                    <th scope="col">Course Title</th>
+                    <th scope="col">Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template v-if="filteredCourses && filteredCourses.length > 0">
+                    <tr 
+                      v-for="(course, index) in filteredCourses" 
+                      :key="course.id || index" 
+                      @click="selectCourse(index)" 
+                      :class="{ 'table-active': selectedCourse == index }"
+                      style="cursor: pointer;"
+                    >
+                      <td class="text-center fw-bold text-muted">{{ course.id }}</td>
+                      <td class="fw-semibold">{{ course.title }}</td>
+                      <td class="text-muted">{{ course.description }}</td>
+                    </tr>
+                  </template>
+                  <tr v-else-if="searchQuery && filteredCourses.length === 0">
+                    <td colspan="3" class="text-center text-muted py-5">
+                      <div>
+                        <p class="mb-1"><em>No courses found matching "{{ searchQuery }}"</em></p>
+                        <small class="text-muted">Try adjusting your search terms</small>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr v-else-if="!filteredCourses || filteredCourses.length === 0">
+                    <td colspan="3" class="text-center text-muted py-5">
+                      <div>
+                        <p class="mb-0"><em>No courses available</em></p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
