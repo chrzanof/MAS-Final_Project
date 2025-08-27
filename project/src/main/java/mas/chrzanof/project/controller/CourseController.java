@@ -44,7 +44,7 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<Course> createCourse(@RequestBody Course course, HttpServletRequest request) {
+    public ResponseEntity<CourseDTO> createCourse(@RequestBody Course course, HttpServletRequest request) {
         
         
         HttpSession session = request.getSession(false);
@@ -61,7 +61,8 @@ public class CourseController {
         }
         
 
-        return ResponseEntity.ok(courseService.createCourse(course, teacher));
+        Course createdCourse = courseService.createCourse(course, teacher);
+        return ResponseEntity.ok(courseService.convertToDTO(createdCourse));
     }
 
     @PostMapping("/{courseId}/lessons")

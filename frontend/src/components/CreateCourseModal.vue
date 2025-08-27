@@ -61,11 +61,10 @@ export default {
 
         const response = await axios.post('http://localhost:8080/api/courses', courseData)
         
-        
         this.createdCourse = response.data
         this.showSuccessConfirmation = true
         
-        // Emit success event with the mock created course
+        // Emit success event with the created course
         this.$emit('courseCreated', response.data)
         
       } catch (error) {
@@ -119,140 +118,142 @@ export default {
 </script>
 
 <template>
+  <div>
     <div class="modal fade show" style="display: block;" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="false">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="staticBackdropLabel">
-          {{ showSuccessConfirmation ? 'Course Created Successfully' : 'Create New Course' }}
-        </h1>
-        <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <!-- Success Confirmation -->
-        <div v-if="showSuccessConfirmation">
-          <div class="alert alert-success text-center" role="alert">
-            <h4 class="alert-heading mb-1">Success!</h4>
-            <p class="mb-0">Course has been saved!</p>
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="staticBackdropLabel">
+              {{ showSuccessConfirmation ? 'Course Created Successfully' : 'Create New Course' }}
+            </h1>
+            <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
           </div>
-          
-          <div class="text-center">
-            <h5 class="mb-3">Would you like to create first lesson?</h5>
-            <div class="d-flex justify-content-center gap-3">
-              <button 
-                type="button" 
-                class="btn btn-secondary px-4"
-                @click="onCreateLessonNo"
-              >
-                No
-              </button>
-              <button 
-                type="button" 
-                class="btn btn-primary px-4"
-                @click="onCreateLessonYes"
-              >
-                Yes
-              </button>
+          <div class="modal-body">
+            <!-- Success Confirmation -->
+            <div v-if="showSuccessConfirmation">
+              <div class="alert alert-success text-center" role="alert">
+                <h4 class="alert-heading mb-1">Success!</h4>
+                <p class="mb-0">Course has been saved!</p>
+              </div>
+              
+              <div class="text-center">
+                <h5 class="mb-3">Would you like to create first lesson?</h5>
+                <div class="d-flex justify-content-center gap-3">
+                  <button 
+                    type="button" 
+                    class="btn btn-secondary px-4"
+                    @click="onCreateLessonNo"
+                  >
+                    No
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn btn-primary px-4"
+                    @click="onCreateLessonYes"
+                  >
+                    Yes
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Course Creation Form -->
+            <div v-else>
+              <!-- Error Alert -->
+              <div v-if="error" class="alert alert-danger" role="alert">
+                {{ error }}
+              </div>
+              
+              <form @submit.prevent="createCourse">
+              <div class="mb-3">
+                <label for="courseTitle" class="form-label">Course Title <span class="text-danger">*</span></label>
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="courseTitle" 
+                  v-model="form.title"
+                  placeholder="Enter course title"
+                  :disabled="loading"
+                  required
+                >
+              </div>
+              
+              <div class="mb-3">
+                <label for="courseDescription" class="form-label">Course Description <span class="text-danger">*</span></label>
+                <textarea 
+                  class="form-control" 
+                  id="courseDescription" 
+                  rows="3" 
+                  v-model="form.description"
+                  placeholder="Enter course description"
+                  :disabled="loading"
+                  required
+                ></textarea>
+              </div>
+              
+              <div class="mb-3">
+                <label for="availableFrom" class="form-label">Available From <span class="text-danger">*</span></label>
+                <input 
+                  type="date" 
+                  class="form-control" 
+                  id="availableFrom" 
+                  v-model="form.availableFrom"
+                  :disabled="loading"
+                  :min="new Date().toISOString().split('T')[0]"
+                  required
+                >
+                <div class="form-text">Select when the course becomes available to students</div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="availableTo" class="form-label">Available To <span class="text-danger">*</span></label>
+                <input 
+                  type="date" 
+                  class="form-control" 
+                  id="availableTo" 
+                  v-model="form.availableTo"
+                  :disabled="loading"
+                  :min="form.availableFrom || new Date().toISOString().split('T')[0]"
+                  required
+                >
+               <div class="form-text">Select when the course expires</div>
+              </div>
+              </form>
             </div>
           </div>
+          
+          <!-- Modal Footer - only show during form creation -->
+          <div class="modal-footer" v-if="!showSuccessConfirmation">
+            <button 
+              type="button" 
+              class="btn btn-secondary" 
+              @click="closeModal"
+              :disabled="loading"
+            >
+              Cancel
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-primary" 
+              @click="createCourse"
+              :disabled="loading"
+            >
+              <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {{ loading ? 'Creating...' : 'Confirm' }}
+            </button>
+          </div>
         </div>
-        
-        <!-- Course Creation Form -->
-        <div v-else>
-          <!-- Error Alert -->
-          <div v-if="error" class="alert alert-danger" role="alert">
-            {{ error }}
-          </div>
-          
-          <form @submit.prevent="createCourse">
-          <div class="mb-3">
-            <label for="courseTitle" class="form-label">Course Title <span class="text-danger">*</span></label>
-            <input 
-              type="text" 
-              class="form-control" 
-              id="courseTitle" 
-              v-model="form.title"
-              placeholder="Enter course title"
-              :disabled="loading"
-              required
-            >
-          </div>
-          
-          <div class="mb-3">
-            <label for="courseDescription" class="form-label">Course Description <span class="text-danger">*</span></label>
-            <textarea 
-              class="form-control" 
-              id="courseDescription" 
-              rows="3" 
-              v-model="form.description"
-              placeholder="Enter course description"
-              :disabled="loading"
-              required
-            ></textarea>
-          </div>
-          
-          <div class="mb-3">
-            <label for="availableFrom" class="form-label">Available From <span class="text-danger">*</span></label>
-            <input 
-              type="date" 
-              class="form-control" 
-              id="availableFrom" 
-              v-model="form.availableFrom"
-              :disabled="loading"
-              :min="new Date().toISOString().split('T')[0]"
-              required
-            >
-            <div class="form-text">Select when the course becomes available to students</div>
-          </div>
-          
-                    <div class="mb-3">
-            <label for="availableTo" class="form-label">Available To <span class="text-danger">*</span></label>
-            <input 
-              type="date" 
-              class="form-control" 
-              id="availableTo" 
-              v-model="form.availableTo"
-              :disabled="loading"
-              :min="form.availableFrom || new Date().toISOString().split('T')[0]"
-              required
-            >
-             <div class="form-text">Select when the course expires</div>
-          </div>
-          </form>
-        </div>
-      </div>
-      
-      <!-- Modal Footer - only show during form creation -->
-      <div class="modal-footer" v-if="!showSuccessConfirmation">
-        <button 
-          type="button" 
-          class="btn btn-secondary" 
-          @click="closeModal"
-          :disabled="loading"
-        >
-          Cancel
-        </button>
-        <button 
-          type="button" 
-          class="btn btn-primary" 
-          @click="createCourse"
-          :disabled="loading"
-        >
-          <span v-if="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-          {{ loading ? 'Creating...' : 'Confirm' }}
-        </button>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Lesson Creation Modal -->
-<CreateLessonModal 
-  v-if="showLessonModal"
-  :courseId="createdCourse?.id"
-  @close="onLessonModalClose"
-  @lessonCreated="onLessonCreated"
-/>
+    <!-- Lesson Creation Modal -->
+    <CreateLessonModal 
+      v-if="showLessonModal"
+      :courseId="createdCourse?.id"
+      @close="onLessonModalClose"
+      @lessonCreated="onLessonCreated"
+    />
+  </div>
 </template>
 
 <style scoped>
