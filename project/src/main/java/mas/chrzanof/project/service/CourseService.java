@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
+import mas.chrzanof.project.repository.LessonRepository;
+import mas.chrzanof.project.repository.QuizRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +27,15 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final TeacherRepository teacherRepository;
 
-    public CourseService(CourseRepository courseRepository, TeacherRepository teacherRepository) {
+    private final LessonRepository lessonRepository;
+
+    private final QuizRepository quizRepository;
+
+    public CourseService(CourseRepository courseRepository, TeacherRepository teacherRepository, LessonRepository lessonRepository, QuizRepository quizRepository) {
         this.courseRepository = courseRepository;
         this.teacherRepository = teacherRepository;
+        this.lessonRepository = lessonRepository;
+        this.quizRepository = quizRepository;
     }
 
     public List<CourseDTO> getAllCourses() {
@@ -85,7 +93,8 @@ public class CourseService {
         Course course = getCourseById(courseId);
         lesson.setCourse(course);
         course.getLessons().put(lesson.getLessonNumber(), lesson);
-        return courseRepository.save(course);
+        lessonRepository.save(lesson);
+        return course;
     }
 
     @Transactional
@@ -93,7 +102,8 @@ public class CourseService {
         Course course = getCourseById(courseId);
         quiz.setCourse(course);
         course.getQuizzes().add(quiz);
-        return courseRepository.save(course);
+        quizRepository.save(quiz);
+        return course;
     }
 
     public Course getCourseById(Long id) {

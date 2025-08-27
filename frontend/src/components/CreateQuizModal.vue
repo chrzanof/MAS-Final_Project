@@ -1,4 +1,5 @@
 <script>
+import axios from 'axios'
 export default {
   props: {
     courseId: {
@@ -138,13 +139,13 @@ export default {
         }
         
         // For now, simulate a successful response
-        const mockResponse = {
-          id: Date.now(),
-          ...quizData
-        }
-        
+        // const mockResponse = {
+        //   id: Date.now(),
+        //   ...quizData
+        // }
+        const response = await axios.post(`http://localhost:8080/api/courses/${this.courseId}/lessons`, quizData)
         // Store created quiz and show success confirmation
-        this.createdQuiz = mockResponse
+        this.createdQuiz = response.data
         this.showSuccessConfirmation = true
         
         // Emit success event with the mock created quiz
