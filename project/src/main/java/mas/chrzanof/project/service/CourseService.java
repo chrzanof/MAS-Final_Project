@@ -255,4 +255,60 @@ public class CourseService {
         course.getLessons().put(currentPosition + 1, lessonToMove);
         course.getLessons().put(currentPosition, lessonBelow);
     }
+
+    @Transactional
+    public void moveQuizUp(Long courseId, Long quizId) {
+        Course course = getCourseById(courseId);
+        Quiz quizToMove = quizRepository.findById(quizId)
+                .orElseThrow(() -> new NoSuchElementException("Quiz not found with id: " + quizId));
+        
+        int currentPosition = quizToMove.getPositionIndex();
+        if (currentPosition <= 0) {
+            throw new IllegalStateException("Quiz is already at the top");
+        }
+        
+        Quiz quizAbove = course.getQuizzes().stream()
+                .filter(q -> q.getPositionIndex() == currentPosition - 1)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No quiz found at position " + (currentPosition - 1)));
+        
+        quizToMove.setPositionIndex(currentPosition - 1);
+        quizAbove.setPositionIndex(currentPosition);
+        
+        quizRepository.save(quizToMove);
+        quizRepository.save(quizAbove);
+        
+        course.getQuizzes().removeIf(q -> q.getId().equals(quizToMove.getId()) || q.getId().equals(quizAbove.getId()));
+        course.getQuizzes().add(quizToMove);
+        course.getQuizzes().add(quizAbove);
+    }
+
+    @Transactional
+    public void moveQuizDown(Long courseId, Long quizId) {
+        Course course = getCourseById(courseId);
+        Quiz quizToMove = quizRepository.findById(quizId)
+                .orElseThrow(() -> new NoSuchElementException("Quiz not found with id: " + quizId));
+        
+        int currentPosition = quizToMove.getPositionIndex();
+        int maxPosition = course.getQuizzes().size() - 1;
+        
+        if (currentPosition >= maxPosition) {
+            throw new IllegalStateException("Quiz is already at the bottom");
+        }
+        
+        Quiz quizBelow = course.getQuizzes().stream()
+                .filter(q -> q.getPositionIndex() == currentPosition + 1)
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No quiz found at position " + (currentPosition + 1)));
+        
+        quizToMove.setPositionIndex(currentPosition + 1);
+        quizBelow.setPositionIndex(currentPosition);
+        
+        quizRepository.save(quizToMove);
+        quizRepository.save(quizBelow);
+        
+        course.getQuizzes().removeIf(q -> q.getId().equals(quizToMove.getId()) || q.getId().equals(quizBelow.getId()));
+        course.getQuizzes().add(quizToMove);
+        course.getQuizzes().add(quizBelow);
+    }
 } 

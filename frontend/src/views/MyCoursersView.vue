@@ -28,6 +28,13 @@ export default {
       }
       return Object.values(this.courses[this.selectedCourse].lessons)
         .sort((a, b) => a.lessonNumber - b.lessonNumber)
+    },
+    sortedQuizzes() {
+      if (!this.courses || !this.courses[this.selectedCourse] || !this.courses[this.selectedCourse].quizzes) {
+        return []
+      }
+      return this.courses[this.selectedCourse].quizzes
+        .sort((a, b) => a.positionIndex - b.positionIndex)
     }
   },
   methods: {
@@ -71,6 +78,28 @@ export default {
       } catch (error) {
         console.error('Error moving lesson down:', error);
         alert('Failed to move lesson down. Please try again.');
+      }
+    },
+    async moveQuizUp(quiz) {
+      if (quiz.positionIndex <= 0) return;
+      
+      try {
+        await axios.put(`http://localhost:8080/api/courses/${this.courses[this.selectedCourse].id}/quizzes/${quiz.id}/move-up`);
+        await this.fetchCourses();
+      } catch (error) {
+        console.error('Error moving quiz up:', error);
+        alert('Failed to move quiz up. Please try again.');
+      }
+    },
+    async moveQuizDown(quiz) {
+      if (quiz.positionIndex >= this.sortedQuizzes.length - 1) return;
+      
+      try {
+        await axios.put(`http://localhost:8080/api/courses/${this.courses[this.selectedCourse].id}/quizzes/${quiz.id}/move-down`);
+        await this.fetchCourses();
+      } catch (error) {
+        console.error('Error moving quiz down:', error);
+        alert('Failed to move quiz down. Please try again.');
       }
     },
   }
@@ -210,17 +239,43 @@ export default {
                   <tr>
                     <th scope="col">Quiz Name</th>
                     <th scope="col">Description</th>
+                    <th scope="col" width="120">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <template v-if="courses && courses[selectedCourse] && courses[selectedCourse].quizzes && Object.keys(courses[selectedCourse].quizzes).length > 0">
-                    <tr v-for="quiz in Object.values(courses[selectedCourse].quizzes)" :key="quiz.id">
-                      <td class="fw-semibold">{{ quiz.title }}</td>
+                    <tr v-for="(quiz, index) in sortedQuizzes" :key="quiz.id">
+                      <td class="fw-semibold">
+                        <span class="badge bg-info me-2">{{ quiz.positionIndex }}</span>
+                        {{ quiz.title }}
+                      </td>
                       <td class="text-muted">{{ quiz.description }}</td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button 
+                            type="button" 
+                            :class="quiz.positionIndex === 0 ? 'btn btn-light btn-sm disabled-arrow' : 'btn btn-outline-primary btn-sm active-arrow'"
+                            @click="moveQuizUp(quiz)"
+                            :disabled="quiz.positionIndex === 0"
+                            :title="quiz.positionIndex === 0 ? 'Already at top' : 'Move Up'"
+                          >
+                            ↑
+                          </button>
+                          <button 
+                            type="button" 
+                            :class="quiz.positionIndex === sortedQuizzes.length - 1 ? 'btn btn-light btn-sm disabled-arrow' : 'btn btn-outline-primary btn-sm active-arrow'"
+                            @click="moveQuizDown(quiz)"
+                            :disabled="quiz.positionIndex === sortedQuizzes.length - 1"
+                            :title="quiz.positionIndex === sortedQuizzes.length - 1 ? 'Already at bottom' : 'Move Down'"
+                          >
+                            ↓
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   </template>
                   <tr v-else>
-                    <td colspan="2" class="text-center text-muted py-4">
+                    <td colspan="3" class="text-center text-muted py-4">
                       <em>{{ courses && courses.length > 0 ? 'No quizzes available' : 'Select a course to view quizzes' }}</em>
                     </td>
                   </tr>
