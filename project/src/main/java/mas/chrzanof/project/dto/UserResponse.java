@@ -12,13 +12,15 @@ public class UserResponse {
     private String email;
     private Integer phoneNumber;
     private boolean isTeacher;
+    private boolean isStudent;
     
-    public UserResponse(Long id, String name, String surname, String email, Integer phoneNumber, boolean isTeacher) {
+    public UserResponse(Long id, String name, String surname, String email, Integer phoneNumber, boolean isTeacher, boolean isStudent) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.isTeacher = isTeacher;
+        this.isStudent = isStudent;
     }
 }

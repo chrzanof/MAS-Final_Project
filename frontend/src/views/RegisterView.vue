@@ -11,6 +11,7 @@ export default {
       password: '',
       repeatPassword: '',
       isTeacher: false,
+      isStudent: false,
       error: '',
       loading: false
     }
@@ -39,7 +40,8 @@ export default {
         email: this.email,
         password: this.password,
         phoneNumber: this.phoneNumber ? parseInt(this.phoneNumber) : null,
-        isTeacher: this.isTeacher
+        isTeacher: this.isTeacher,
+        isStudent: this.isStudent
       }
 
       const result = await authService.register(userData)
@@ -149,6 +151,18 @@ export default {
                                     />
                                     <label class="form-check-label" for="isTeacher">
                                         Register as Teacher
+                                    </label>
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    <input 
+                                        v-model="isStudent"
+                                        type="checkbox" 
+                                        class="form-check-input" 
+                                        id="isStudent"
+                                    />
+                                    <label class="form-check-label" for="isStudent">
+                                        Register as Student
                                     </label>
                                 </div>
 
