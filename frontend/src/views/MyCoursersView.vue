@@ -58,6 +58,10 @@ export default {
       this.showCreateModal = false;
       this.fetchCourses(); 
     },
+    onQuizCreated() {
+      this.showCreateModal = false;
+      this.fetchCourses();
+    },
     async moveLessonUp(lesson) {
       if (lesson.lessonNumber <= 1) return;
       
@@ -102,6 +106,14 @@ export default {
         alert('Failed to move quiz down. Please try again.');
       }
     },
+    formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    }
   }
 }
 </script>
@@ -126,6 +138,8 @@ export default {
                     <th scope="col" class="text-center" style="width: 80px;">#</th>
                     <th scope="col">Title</th>
                     <th scope="col">Description</th>
+                    <th scope="col" style="width: 120px;">From</th>
+                    <th scope="col" style="width: 120px;">To</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -138,10 +152,12 @@ export default {
                       <td class="text-center fw-bold text-muted">{{ course.id }}</td>
                       <td class="fw-semibold">{{ course.title }}</td>
                       <td class="text-muted">{{ course.description }}</td>
+                      <td class="text-muted small">{{ formatDate(course.availableFrom) }}</td>
+                      <td class="text-muted small">{{ formatDate(course.availableTo) }}</td>
                     </tr>
                   </template>
                   <tr v-else>
-                    <td colspan="3" class="text-center text-muted py-4">
+                    <td colspan="5" class="text-center text-muted py-4">
                       <em>No courses available</em>
                     </td>
                   </tr>
@@ -177,7 +193,7 @@ export default {
                 </thead>
                 <tbody>
                   <template v-if="courses && courses[selectedCourse] && courses[selectedCourse].lessons && Object.keys(courses[selectedCourse].lessons).length > 0">
-                    <tr v-for="(lesson, index) in sortedLessons" :key="lesson.id">
+                    <tr v-for="lesson in sortedLessons" :key="lesson.id">
                       <td class="fw-semibold">
                         <span class="badge bg-secondary me-2">{{ lesson.lessonNumber }}</span>
                         {{ lesson.title }}
@@ -244,7 +260,7 @@ export default {
                 </thead>
                 <tbody>
                   <template v-if="courses && courses[selectedCourse] && courses[selectedCourse].quizzes && Object.keys(courses[selectedCourse].quizzes).length > 0">
-                    <tr v-for="(quiz, index) in sortedQuizzes" :key="quiz.id">
+                    <tr v-for="quiz in sortedQuizzes" :key="quiz.id">
                       <td class="fw-semibold">
                         <span class="badge bg-secondary me-2">{{ quiz.positionIndex }}</span>
                         {{ quiz.title }}
@@ -289,7 +305,7 @@ export default {
     
     <CreateCourseModal v-if="showCreateModal && createModalType === 'course'" @close="showCreateModal = false"/>
     <CreateLessonModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'lesson'" @close="showCreateModal = false" @lessonCreated="onLessonCreated"/>
-    <CreateQuizModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'quiz'" @close="showCreateModal = false"/>
+    <CreateQuizModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'quiz'" @close="showCreateModal = false" @quizCreated="onQuizCreated"/>
   </div>
 </template>
 

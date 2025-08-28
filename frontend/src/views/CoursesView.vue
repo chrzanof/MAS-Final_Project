@@ -34,6 +34,14 @@ export default {
     },
     selectCourse(courseIndex) {
       this.selectedCourse = courseIndex;
+    },
+    formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      return new Date(dateString).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
     }
   }
 }
@@ -89,6 +97,8 @@ export default {
                     <th scope="col" class="text-center" style="width: 80px;">#</th>
                     <th scope="col">Course Title</th>
                     <th scope="col">Description</th>
+                    <th scope="col" style="width: 120px;">From</th>
+                    <th scope="col" style="width: 120px;">To</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -103,10 +113,12 @@ export default {
                       <td class="text-center fw-bold text-muted">{{ course.id }}</td>
                       <td class="fw-semibold">{{ course.title }}</td>
                       <td class="text-muted">{{ course.description }}</td>
+                      <td class="text-muted small">{{ formatDate(course.availableFrom) }}</td>
+                      <td class="text-muted small">{{ formatDate(course.availableTo) }}</td>
                     </tr>
                   </template>
                   <tr v-else-if="searchQuery && filteredCourses.length === 0">
-                    <td colspan="3" class="text-center text-muted py-5">
+                    <td colspan="5" class="text-center text-muted py-5">
                       <div>
                         <p class="mb-1"><em>No courses found matching "{{ searchQuery }}"</em></p>
                         <small class="text-muted">Try adjusting your search terms</small>
@@ -114,7 +126,7 @@ export default {
                     </td>
                   </tr>
                   <tr v-else-if="!filteredCourses || filteredCourses.length === 0">
-                    <td colspan="3" class="text-center text-muted py-5">
+                    <td colspan="5" class="text-center text-muted py-5">
                       <div>
                         <p class="mb-0"><em>No courses available</em></p>
                       </div>
