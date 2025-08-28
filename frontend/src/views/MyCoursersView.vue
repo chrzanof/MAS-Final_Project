@@ -21,6 +21,15 @@ export default {
   mounted() {
     this.fetchCourses();
   },
+  computed: {
+    sortedLessons() {
+      if (!this.courses || !this.courses[this.selectedCourse] || !this.courses[this.selectedCourse].lessons) {
+        return []
+      }
+      return Object.values(this.courses[this.selectedCourse].lessons)
+        .sort((a, b) => a.lessonNumber - b.lessonNumber)
+    }
+  },
   methods: {
     async fetchCourses() {
       try {
@@ -37,6 +46,10 @@ export default {
     toggleCreateModal(type) {
       this.showCreateModal = !this.showCreateModal;
       this.createModalType = type;
+    },
+    onLessonCreated() {
+      this.showCreateModal = false;
+      this.fetchCourses(); 
     },
   }
 }
@@ -112,8 +125,11 @@ export default {
                 </thead>
                 <tbody>
                   <template v-if="courses && courses[selectedCourse] && courses[selectedCourse].lessons && Object.keys(courses[selectedCourse].lessons).length > 0">
-                    <tr v-for="lesson in Object.values(courses[selectedCourse].lessons)" :key="lesson.id">
-                      <td class="fw-semibold">{{ lesson.title }}</td>
+                    <tr v-for="lesson in sortedLessons" :key="lesson.id">
+                      <td class="fw-semibold">
+                        <span class="badge bg-secondary me-2">{{ lesson.lessonNumber }}</span>
+                        {{ lesson.title }}
+                      </td>
                       <td class="text-muted">
                         <span v-if="lesson.description">{{ lesson.description }}</span>
                         <em v-else class="text-muted">No description</em>
@@ -172,7 +188,7 @@ export default {
     </div>
     
     <CreateCourseModal v-if="showCreateModal && createModalType === 'course'" @close="showCreateModal = false"/>
-    <CreateLessonModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'lesson'" @close="showCreateModal = false"/>
+    <CreateLessonModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'lesson'" @close="showCreateModal = false" @lessonCreated="onLessonCreated"/>
     <CreateQuizModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'quiz'" @close="showCreateModal = false"/>
   </div>
 </template>

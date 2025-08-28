@@ -52,8 +52,7 @@ export default {
         const lessonData = {
           title: this.form.title.trim(),
           description: this.form.description.trim(),
-          content: this.form.content.trim(),
-          lessonNumber: Date.now() % 1000 // Mock lesson number for now
+          content: this.form.content.trim()
         }
 
         const response = await axios.post(`http://localhost:8080/api/courses/${this.courseId}/lessons`, lessonData)

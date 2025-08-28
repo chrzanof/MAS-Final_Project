@@ -87,7 +87,11 @@ public class CourseService {
     public Course addLessonToCourse(Long courseId, Lesson lesson) {
         Course course = getCourseById(courseId);
         lesson.setCourse(course);
-        course.getLessons().put(lesson.getLessonNumber(), lesson);
+        
+        int nextLessonNumber = course.getLessons().size() + 1;
+        lesson.setLessonNumber(nextLessonNumber);
+        
+        course.getLessons().put(nextLessonNumber, lesson);
         lessonRepository.save(lesson);
         return course;
     }

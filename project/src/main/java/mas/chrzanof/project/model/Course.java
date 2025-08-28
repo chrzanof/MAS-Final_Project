@@ -72,6 +72,7 @@ public class Course {
 
     @OneToMany(mappedBy = "course")
     @MapKey(name = "lessonNumber")
+    @OrderBy("lessonNumber ASC")
     private Map<Integer, Lesson> lessons = new HashMap<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
