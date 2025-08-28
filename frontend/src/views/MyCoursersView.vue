@@ -211,7 +211,7 @@ export default {
                             :disabled="lesson.lessonNumber === 1"
                             :title="lesson.lessonNumber === 1 ? 'Already at top' : 'Move Up'"
                           >
-                            ↑
+                            <i class="bi bi-arrow-up"></i>
                           </button>
                           <button 
                             type="button" 
@@ -220,7 +220,7 @@ export default {
                             :disabled="lesson.lessonNumber === sortedLessons.length"
                             :title="lesson.lessonNumber === sortedLessons.length ? 'Already at bottom' : 'Move Down'"
                           >
-                            ↓
+                            <i class="bi bi-arrow-down"></i>
                           </button>
                         </div>
                       </td>
@@ -275,7 +275,7 @@ export default {
                             :disabled="quiz.positionIndex === 0"
                             :title="quiz.positionIndex === 0 ? 'Already at top' : 'Move Up'"
                           >
-                            ↑
+                            <i class="bi bi-arrow-up"></i>
                           </button>
                           <button 
                             type="button" 
@@ -284,7 +284,7 @@ export default {
                             :disabled="quiz.positionIndex === sortedQuizzes.length - 1"
                             :title="quiz.positionIndex === sortedQuizzes.length - 1 ? 'Already at bottom' : 'Move Down'"
                           >
-                            ↓
+                            <i class="bi bi-arrow-down"></i>
                           </button>
                         </div>
                       </td>

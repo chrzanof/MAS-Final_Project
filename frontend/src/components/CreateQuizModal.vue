@@ -304,7 +304,7 @@ export default {
                           :disabled="questionIndex === 0 || loading"
                           :title="questionIndex === 0 ? 'Already at top' : 'Move Up'"
                         >
-                          ↑
+                                                     <i class="bi bi-arrow-up"></i>
                         </button>
                         <button 
                           type="button" 
@@ -313,7 +313,7 @@ export default {
                           :disabled="questionIndex === questions.length - 1 || loading"
                           :title="questionIndex === questions.length - 1 ? 'Already at bottom' : 'Move Down'"
                         >
-                          ↓
+                                                     <i class="bi bi-arrow-down"></i>
                         </button>
                       </div>
                     </div>
