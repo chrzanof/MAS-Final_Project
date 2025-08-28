@@ -201,4 +201,58 @@ public class CourseService {
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void moveLessonUp(Long courseId, Long lessonId) {
+        Course course = getCourseById(courseId);
+        Lesson lessonToMove = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new NoSuchElementException("Lesson not found with id: " + lessonId));
+        
+        int currentPosition = lessonToMove.getLessonNumber();
+        if (currentPosition <= 1) {
+            throw new IllegalStateException("Lesson is already at the top");
+        }
+        
+        Lesson lessonAbove = course.getLessons().get(currentPosition - 1);
+        if (lessonAbove == null) {
+            throw new IllegalStateException("No lesson found at position " + (currentPosition - 1));
+        }
+        
+        lessonToMove.setLessonNumber(currentPosition - 1);
+        lessonAbove.setLessonNumber(currentPosition);
+        
+        lessonRepository.save(lessonToMove);
+        lessonRepository.save(lessonAbove);
+        
+        course.getLessons().put(currentPosition - 1, lessonToMove);
+        course.getLessons().put(currentPosition, lessonAbove);
+    }
+
+    @Transactional
+    public void moveLessonDown(Long courseId, Long lessonId) {
+        Course course = getCourseById(courseId);
+        Lesson lessonToMove = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new NoSuchElementException("Lesson not found with id: " + lessonId));
+        
+        int currentPosition = lessonToMove.getLessonNumber();
+        int maxPosition = course.getLessons().size();
+        
+        if (currentPosition >= maxPosition) {
+            throw new IllegalStateException("Lesson is already at the bottom");
+        }
+        
+        Lesson lessonBelow = course.getLessons().get(currentPosition + 1);
+        if (lessonBelow == null) {
+            throw new IllegalStateException("No lesson found at position " + (currentPosition + 1));
+        }
+        
+        lessonToMove.setLessonNumber(currentPosition + 1);
+        lessonBelow.setLessonNumber(currentPosition);
+        
+        lessonRepository.save(lessonToMove);
+        lessonRepository.save(lessonBelow);
+        
+        course.getLessons().put(currentPosition + 1, lessonToMove);
+        course.getLessons().put(currentPosition, lessonBelow);
+    }
 } 

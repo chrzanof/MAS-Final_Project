@@ -79,6 +79,22 @@ public class CourseController {
         return ResponseEntity.ok(courseService.addQuizToCourse(courseId, quiz));
     }
 
+    @PutMapping("/{courseId}/lessons/{lessonId}/move-up")
+    public ResponseEntity<Void> moveLessonUp(
+            @PathVariable Long courseId,
+            @PathVariable Long lessonId) {
+        courseService.moveLessonUp(courseId, lessonId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{courseId}/lessons/{lessonId}/move-down")
+    public ResponseEntity<Void> moveLessonDown(
+            @PathVariable Long courseId,
+            @PathVariable Long lessonId) {
+        courseService.moveLessonDown(courseId, lessonId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping
     public ResponseEntity<List<CourseDTO>> getAllCourses() {
         return ResponseEntity.ok(courseService.getAllCourses());

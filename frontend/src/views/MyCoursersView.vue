@@ -51,6 +51,28 @@ export default {
       this.showCreateModal = false;
       this.fetchCourses(); 
     },
+    async moveLessonUp(lesson) {
+      if (lesson.lessonNumber <= 1) return;
+      
+      try {
+        await axios.put(`http://localhost:8080/api/courses/${this.courses[this.selectedCourse].id}/lessons/${lesson.id}/move-up`);
+        await this.fetchCourses();
+      } catch (error) {
+        console.error('Error moving lesson up:', error);
+        alert('Failed to move lesson up. Please try again.');
+      }
+    },
+    async moveLessonDown(lesson) {
+      if (lesson.lessonNumber >= this.sortedLessons.length) return;
+      
+      try {
+        await axios.put(`http://localhost:8080/api/courses/${this.courses[this.selectedCourse].id}/lessons/${lesson.id}/move-down`);
+        await this.fetchCourses();
+      } catch (error) {
+        console.error('Error moving lesson down:', error);
+        alert('Failed to move lesson down. Please try again.');
+      }
+    },
   }
 }
 </script>
@@ -121,11 +143,12 @@ export default {
                   <tr>
                     <th scope="col">Lesson Name</th>
                     <th scope="col">Description</th>
+                    <th scope="col" width="120">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <template v-if="courses && courses[selectedCourse] && courses[selectedCourse].lessons && Object.keys(courses[selectedCourse].lessons).length > 0">
-                    <tr v-for="lesson in sortedLessons" :key="lesson.id">
+                    <tr v-for="(lesson, index) in sortedLessons" :key="lesson.id">
                       <td class="fw-semibold">
                         <span class="badge bg-secondary me-2">{{ lesson.lessonNumber }}</span>
                         {{ lesson.title }}
@@ -134,10 +157,32 @@ export default {
                         <span v-if="lesson.description">{{ lesson.description }}</span>
                         <em v-else class="text-muted">No description</em>
                       </td>
+                      <td>
+                        <div class="btn-group" role="group">
+                          <button 
+                            type="button" 
+                            :class="lesson.lessonNumber === 1 ? 'btn btn-light btn-sm disabled-arrow' : 'btn btn-outline-primary btn-sm active-arrow'"
+                            @click="moveLessonUp(lesson)"
+                            :disabled="lesson.lessonNumber === 1"
+                            :title="lesson.lessonNumber === 1 ? 'Already at top' : 'Move Up'"
+                          >
+                            ↑
+                          </button>
+                          <button 
+                            type="button" 
+                            :class="lesson.lessonNumber === sortedLessons.length ? 'btn btn-light btn-sm disabled-arrow' : 'btn btn-outline-primary btn-sm active-arrow'"
+                            @click="moveLessonDown(lesson)"
+                            :disabled="lesson.lessonNumber === sortedLessons.length"
+                            :title="lesson.lessonNumber === sortedLessons.length ? 'Already at bottom' : 'Move Down'"
+                          >
+                            ↓
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   </template>
                   <tr v-else>
-                    <td colspan="2" class="text-center text-muted py-4">
+                    <td colspan="3" class="text-center text-muted py-4">
                       <em>{{ courses && courses.length > 0 ? 'No lessons available' : 'Select a course to view lessons' }}</em>
                     </td>
                   </tr>
@@ -194,5 +239,29 @@ export default {
 </template>
 
 <style scoped>
+.disabled-arrow {
+  opacity: 0.3;
+  color: #6c757d !important;
+  border-color: #dee2e6 !important;
+  background-color: #f8f9fa !important;
+  cursor: not-allowed !important;
+}
 
+.disabled-arrow:hover {
+  opacity: 0.3 !important;
+  color: #6c757d !important;
+  border-color: #dee2e6 !important;
+  background-color: #f8f9fa !important;
+  transform: none !important;
+}
+
+.active-arrow {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.active-arrow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
 </style>
