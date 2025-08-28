@@ -19,21 +19,16 @@ import mas.chrzanof.project.model.Teacher;
 import mas.chrzanof.project.repository.CourseRepository;
 import mas.chrzanof.project.repository.LessonRepository;
 import mas.chrzanof.project.repository.QuizRepository;
-import mas.chrzanof.project.repository.TeacherRepository;
 
 @Service
 @Transactional
 public class CourseService {
     private final CourseRepository courseRepository;
-    private final TeacherRepository teacherRepository;
-
     private final LessonRepository lessonRepository;
-
     private final QuizRepository quizRepository;
 
-    public CourseService(CourseRepository courseRepository, TeacherRepository teacherRepository, LessonRepository lessonRepository, QuizRepository quizRepository) {
+    public CourseService(CourseRepository courseRepository, LessonRepository lessonRepository, QuizRepository quizRepository) {
         this.courseRepository = courseRepository;
-        this.teacherRepository = teacherRepository;
         this.lessonRepository = lessonRepository;
         this.quizRepository = quizRepository;
     }
@@ -101,7 +96,6 @@ public class CourseService {
     public Course addQuizToCourse(Long courseId, Quiz quiz) {
         Course course = getCourseById(courseId);
         quiz.setCourse(course);
-        // Set the quiz reference in all questions (important for bidirectional relationship)
         quiz.getQuestions().forEach(question -> question.setQuiz(quiz));
         course.getQuizzes().add(quiz);
         quizRepository.save(quiz);
@@ -199,7 +193,7 @@ public class CourseService {
     }
 
     public List<CourseDTO> getCoursesByTeacherInCharge(Teacher teacher) {
-        return teacher.getCoursesInCharge().stream()
+        return courseRepository.findCoursesByTeacherInChargeWithLessonsAndQuizzes(teacher).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

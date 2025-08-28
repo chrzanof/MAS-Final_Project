@@ -86,7 +86,7 @@ public class CourseController {
 
     @GetMapping("/my-courses")
     public ResponseEntity<List<CourseDTO>> getMyCourses(HttpServletRequest request) {
-        // Get current user from session
+
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("userId") == null) {
             return ResponseEntity.status(401).build();

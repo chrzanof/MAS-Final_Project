@@ -41,27 +41,27 @@ const router = createRouter({
   ]
 })
 
-// Route guards
+
 router.beforeEach(async (to, from, next) => {
   const isAuthenticated = await authService.checkAuthStatus()
 
-  // If route requires authentication and user is not authenticated
+  
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/')
     return
   }
 
-  // If user is authenticated and trying to access login/register/home, redirect to courses
+  
   if ((to.meta.redirectIfAuth || to.path === '/') && isAuthenticated) {
     next('/courses')
     return
   }
 
-  // If trying to access my-courses and user is not a teacher
+
   if (to.path === '/my-courses' && isAuthenticated) {
     const user = authService.getUser()
     if (!user || !user.teacher) {
-      next('/courses') // Redirect non-teachers to browse courses
+      next('/courses')
       return
     }
   }

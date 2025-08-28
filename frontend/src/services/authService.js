@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-// Configure axios defaults
+
 axios.defaults.withCredentials = true
 
 class AuthService {
@@ -10,17 +10,17 @@ class AuthService {
     this.listeners = []
   }
 
-  // Add a listener for user state changes
+  
   addUserChangeListener(callback) {
     this.listeners.push(callback)
   }
 
-  // Remove a listener
+  
   removeUserChangeListener(callback) {
     this.listeners = this.listeners.filter(listener => listener !== callback)
   }
 
-  // Notify all listeners when user state changes
+  
   notifyUserChange() {
     this.listeners.forEach(callback => callback(this.user))
   }
@@ -94,5 +94,5 @@ class AuthService {
   }
 }
 
-// Export a singleton instance
+
 export default new AuthService()

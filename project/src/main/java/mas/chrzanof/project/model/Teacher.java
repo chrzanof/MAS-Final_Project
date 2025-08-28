@@ -68,4 +68,15 @@ public class Teacher {
     public int hashCode() {
         return Objects.hash(id, teacherId);
     }
+
+    public void assignTo(Course course) {
+        assignedCourses.add(course);
+    }
+
+    public void setInChargeOf(Course course) {
+        if(!assignedCourses.contains(course)) {
+            throw new IllegalArgumentException("This course is not assigned to a teacher!");
+        }
+        coursesInCharge.add(course);
+    }
 }

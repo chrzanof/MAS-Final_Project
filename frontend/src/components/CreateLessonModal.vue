@@ -58,11 +58,11 @@ export default {
 
         const response = await axios.post(`http://localhost:8080/api/courses/${this.courseId}/lessons`, lessonData)
         
-        // Store created lesson and show success confirmation
+       
         this.createdLesson = response.data
         this.showSuccessConfirmation = true
         
-        // Emit success event with the created lesson
+        
         this.$emit('lessonCreated', response.data)
         
       } catch (error) {
@@ -92,7 +92,7 @@ export default {
     },
     
     onCreateAnotherLessonYes() {
-      // Reset form to create another lesson but keep modal open
+      
       this.form = {
         title: '',
         description: '',
@@ -104,27 +104,25 @@ export default {
     },
     
     onCreateAnotherLessonNo() {
-      // Show quiz confirmation
+      
       this.showSuccessConfirmation = false
       this.showQuizConfirmation = true
     },
     
     onCreateQuizYes() {
-      // Transition to quiz creation
+      
       this.showQuizConfirmation = false
       this.showQuizModal = true
     },
     
     onCreateQuizNo() {
-      // User doesn't want to create quiz, close modal
+      
       this.resetForm()
       this.$emit('close')
     },
     
     onQuizCreated(quiz) {
-      // Quiz was created successfully - let the quiz modal handle its own success flow
       console.log('Quiz created:', quiz)
-      // Don't close immediately, let the quiz modal show success confirmation
     },
     
     onQuizModalClose() {
@@ -148,7 +146,7 @@ export default {
             <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <!-- Success Confirmation -->
+            
             <div v-if="showSuccessConfirmation">
               <div class="alert alert-success text-center" role="alert">
                 <h4 class="alert-heading mb-1">Success!</h4>
@@ -176,7 +174,7 @@ export default {
               </div>
             </div>
             
-            <!-- Quiz Creation Confirmation -->
+            
             <div v-else-if="showQuizConfirmation">
               <div class="text-center">
                 <h5 class="mb-3">Do you want to create quiz?</h5>
@@ -199,9 +197,9 @@ export default {
               </div>
             </div>
             
-            <!-- Lesson Creation Form -->
+            
             <div v-else>
-              <!-- Error Alert -->
+              
               <div v-if="error" class="alert alert-danger" role="alert">
                 {{ error }}
               </div>
@@ -250,7 +248,7 @@ export default {
             </div>
           </div>
           
-          <!-- Modal Footer - only show during form creation -->
+          
           <div class="modal-footer" v-if="!showSuccessConfirmation && !showQuizConfirmation">
             <button 
               type="button" 
@@ -274,7 +272,6 @@ export default {
       </div>
     </div>
 
-    <!-- Quiz Creation Modal -->
     <CreateQuizModal 
       v-if="showQuizModal"
       :courseId="courseId"

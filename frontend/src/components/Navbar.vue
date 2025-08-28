@@ -11,20 +11,20 @@ export default {
   async mounted() {
     await this.checkAuthStatus()
     
-    // Listen for user state changes from AuthService
+    
     this.userChangeListener = (user) => {
       this.user = user
     }
     authService.addUserChangeListener(this.userChangeListener)
   },
   beforeUnmount() {
-    // Clean up listener
+    
     if (this.userChangeListener) {
       authService.removeUserChangeListener(this.userChangeListener)
     }
   },
   watch: {
-    // Watch for route changes and update auth status
+    
     '$route'() {
       this.checkAuthStatus()
     }

@@ -62,7 +62,7 @@ public class AuthService {
 
         Person savedPerson = personRepository.save(person);
 
-        // Create Teacher entity if requested
+
         if (registerRequest.isTeacher()) {
             Teacher teacher = new Teacher();
             teacher.setPerson(savedPerson);
@@ -71,7 +71,7 @@ public class AuthService {
             savedPerson = personRepository.save(savedPerson);
         }
 
-        // Check if person is a teacher by looking up in teacher repository
+
         boolean isTeacher = teacherRepository.findByPersonId(savedPerson.getId()) != null;
         
         return new UserResponse(
@@ -88,7 +88,7 @@ public class AuthService {
         Optional<Person> personOpt = personRepository.findById(userId);
         if (personOpt.isPresent()) {
             Person person = personOpt.get();
-            // Check if person is a teacher by looking up in teacher repository
+
             boolean isTeacher = teacherRepository.findByPersonId(person.getId()) != null;
             
             return new UserResponse(

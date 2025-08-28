@@ -46,7 +46,7 @@ export default {
       const currentLength = this.questions.length
       
       if (numberOfQuestions > currentLength) {
-        // Add new questions
+        
         for (let i = currentLength; i < numberOfQuestions; i++) {
           this.questions.push({
             type: 'multichoice',
@@ -58,7 +58,6 @@ export default {
           })
         }
       } else if (numberOfQuestions < currentLength) {
-        // Remove questions
         this.questions = this.questions.slice(0, numberOfQuestions)
       }
     },
@@ -70,7 +69,7 @@ export default {
     removeOption(questionIndex, optionIndex) {
       if (this.questions[questionIndex].options.length > 2) {
         this.questions[questionIndex].options.splice(optionIndex, 1)
-        // Adjust correct option if needed
+       
         if (this.questions[questionIndex].correctOption >= optionIndex) {
           this.questions[questionIndex].correctOption = Math.max(0, this.questions[questionIndex].correctOption - 1)
         }
@@ -145,17 +144,13 @@ export default {
           }))
         }
         
-        // For now, simulate a successful response
-        // const mockResponse = {
-        //   id: Date.now(),
-        //   ...quizData
-        // }
+        
         const response = await axios.post(`http://localhost:8080/api/courses/${this.courseId}/quizzes`, quizData)
-        // Store created quiz and show success confirmation
+        
         this.createdQuiz = response.data
         this.showSuccessConfirmation = true
         
-        // Emit success event with the created quiz
+        
         this.$emit('quizCreated', response.data)
         
       } catch (error) {
@@ -184,7 +179,7 @@ export default {
     },
     
     onSuccessOk() {
-      // Close the modal after success acknowledgment
+      
       this.resetForm()
       this.$emit('close')
     }
@@ -204,7 +199,7 @@ export default {
         </div>
         
         <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
-          <!-- Success Confirmation -->
+          
           <div v-if="showSuccessConfirmation">
             <div class="alert alert-success text-center" role="alert">
               <h4 class="alert-heading mb-1">Success!</h4>
@@ -222,15 +217,15 @@ export default {
             </div>
           </div>
           
-          <!-- Quiz Creation Form -->
+          
           <div v-else>
-            <!-- Error Alert -->
+          
             <div v-if="error" class="alert alert-danger" role="alert">
               {{ error }}
             </div>
             
             <form @submit.prevent="createQuiz">
-            <!-- Basic Quiz Info -->
+            
             <div class="row mb-3">
               <div class="col-md-8">
                 <label for="quizTitle" class="form-label">Quiz Title <span class="text-danger">*</span></label>
@@ -273,7 +268,7 @@ export default {
             
             <hr>
             
-            <!-- Questions Section -->
+            
             <div class="questions-section">
               <h5 class="mb-3">Questions</h5>
               
@@ -312,7 +307,7 @@ export default {
                 </div>
                 
                 <div class="card-body">
-                  <!-- Question Content -->
+                  
                   <div class="mb-3">
                     <label class="form-label">Question Content <span class="text-danger">*</span></label>
                     <textarea 
@@ -325,7 +320,7 @@ export default {
                     ></textarea>
                   </div>
                   
-                  <!-- Multiple Choice Options -->
+                  
                   <div v-if="question.type === 'multichoice'">
                     <label class="form-label">Answer Options <span class="text-danger">*</span></label>
                     <div 
@@ -376,7 +371,7 @@ export default {
                     </div>
                   </div>
                   
-                  <!-- Open Question Answer -->
+                  
                   <div v-if="question.type === 'open'">
                     <label class="form-label">Correct Answer <span class="text-danger">*</span></label>
                     <textarea 
@@ -395,7 +390,7 @@ export default {
           </div>
         </div>
         
-        <!-- Modal Footer - only show during form creation -->
+       
         <div class="modal-footer" v-if="!showSuccessConfirmation">
           <button 
             type="button" 

@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     async createCourse() {
-      // Validate form
+      
       if (!this.form.title.trim()) {
         this.error = 'Course title is required'
         return
@@ -42,7 +42,7 @@ export default {
         return
       }
       
-      // Validate that Available To is after Available From
+      
       if (this.form.availableTo <= this.form.availableFrom) {
         this.error = 'Available To date must be after Available From date'
         return
@@ -55,8 +55,8 @@ export default {
         const courseData = {
           title: this.form.title.trim(),
           description: this.form.description.trim(),
-          availableFrom: this.form.availableFrom + 'T00:00:00', // Convert to datetime format
-          availableTo: this.form.availableTo + 'T23:59:59' // Convert to datetime format
+          availableFrom: this.form.availableFrom + 'T00:00:00', 
+          availableTo: this.form.availableTo + 'T23:59:59' 
         }
 
         const response = await axios.post('http://localhost:8080/api/courses', courseData)
@@ -64,7 +64,7 @@ export default {
         this.createdCourse = response.data
         this.showSuccessConfirmation = true
         
-        // Emit success event with the created course
+        
         this.$emit('courseCreated', response.data)
         
       } catch (error) {
@@ -104,9 +104,7 @@ export default {
     },
     
     onLessonCreated(lesson) {
-      // Lesson was created successfully - let the lesson modal handle its own flow
       console.log('Lesson created:', lesson)
-      // Don't close immediately, let the lesson modal show success confirmation
     },
     
     onLessonModalClose() {
@@ -129,7 +127,7 @@ export default {
             <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <!-- Success Confirmation -->
+            
             <div v-if="showSuccessConfirmation">
               <div class="alert alert-success text-center" role="alert">
                 <h4 class="alert-heading mb-1">Success!</h4>
@@ -222,7 +220,7 @@ export default {
             </div>
           </div>
           
-          <!-- Modal Footer - only show during form creation -->
+
           <div class="modal-footer" v-if="!showSuccessConfirmation">
             <button 
               type="button" 
@@ -246,7 +244,7 @@ export default {
       </div>
     </div>
 
-    <!-- Lesson Creation Modal -->
+    
     <CreateLessonModal 
       v-if="showLessonModal"
       :courseId="createdCourse?.id"

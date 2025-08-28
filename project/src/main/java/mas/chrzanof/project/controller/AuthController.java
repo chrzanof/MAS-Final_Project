@@ -70,8 +70,7 @@ public class AuthController {
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("userId") != null) {
             UserResponse user = (UserResponse) session.getAttribute("user");
-            
-            // If user object is missing from session, rebuild it from userId
+
             if (user == null) {
                 Long userId = (Long) session.getAttribute("userId");
                 user = authService.getCurrentUser(userId);

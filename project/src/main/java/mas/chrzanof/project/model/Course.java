@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,7 +68,7 @@ public class Course {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("positionIndex ASC")
-    private List<Quiz> quizzes = new ArrayList<>();
+    private Set<Quiz> quizzes = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "course")
     @MapKey(name = "lessonNumber")
@@ -84,5 +85,11 @@ public class Course {
     public void removeEnrollment(Enrollment enrollment) {
         enrollments.remove(enrollment);
         enrollment.setCourse(null);
+    }
+    public void setTeacherInCharge(Teacher teacher) {
+        if(!assignedTeachers.contains(teacher)) {
+            throw new IllegalArgumentException("Teacher must be assigned to the course!");
+        }
+        this.teacherInCharge = teacher;
     }
 }
