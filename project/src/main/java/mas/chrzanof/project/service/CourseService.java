@@ -100,6 +100,10 @@ public class CourseService {
     public Course addQuizToCourse(Long courseId, Quiz quiz) {
         Course course = getCourseById(courseId);
         quiz.setCourse(course);
+        
+        int nextQuizPosition = course.getQuizzes().size();
+        quiz.setPositionIndex(nextQuizPosition);
+        
         quiz.getQuestions().forEach(question -> question.setQuiz(quiz));
         course.getQuizzes().add(quiz);
         quizRepository.save(quiz);

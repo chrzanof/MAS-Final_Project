@@ -129,7 +129,6 @@ export default {
           title: this.form.title.trim(),
           description: this.form.description.trim(),
           courseId: this.courseId,
-          positionIndex: Date.now() % 1000,
           questions: this.questions.map((q, index) => ({
             text: q.content.trim(),
             points: q.points,
@@ -182,6 +181,22 @@ export default {
       
       this.resetForm()
       this.$emit('close')
+    },
+    
+    moveQuestionUp(questionIndex) {
+      if (questionIndex <= 0) return;
+      
+      const questions = [...this.questions];
+      [questions[questionIndex], questions[questionIndex - 1]] = [questions[questionIndex - 1], questions[questionIndex]];
+      this.questions = questions;
+    },
+    
+    moveQuestionDown(questionIndex) {
+      if (questionIndex >= this.questions.length - 1) return;
+      
+      const questions = [...this.questions];
+      [questions[questionIndex], questions[questionIndex + 1]] = [questions[questionIndex + 1], questions[questionIndex]];
+      this.questions = questions;
     }
   }
 }
@@ -279,7 +294,29 @@ export default {
               >
                 <div class="card-header">
                   <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0">Question {{ questionIndex + 1 }}</h6>
+                    <div class="d-flex align-items-center gap-2">
+                      <h6 class="mb-0">Question {{ questionIndex + 1 }}</h6>
+                      <div class="btn-group" role="group" v-if="questions.length > 1">
+                        <button 
+                          type="button" 
+                          :class="questionIndex === 0 ? 'btn btn-light btn-sm disabled-arrow' : 'btn btn-outline-primary btn-sm active-arrow'"
+                          @click="moveQuestionUp(questionIndex)"
+                          :disabled="questionIndex === 0 || loading"
+                          :title="questionIndex === 0 ? 'Already at top' : 'Move Up'"
+                        >
+                          ↑
+                        </button>
+                        <button 
+                          type="button" 
+                          :class="questionIndex === questions.length - 1 ? 'btn btn-light btn-sm disabled-arrow' : 'btn btn-outline-primary btn-sm active-arrow'"
+                          @click="moveQuestionDown(questionIndex)"
+                          :disabled="questionIndex === questions.length - 1 || loading"
+                          :title="questionIndex === questions.length - 1 ? 'Already at bottom' : 'Move Down'"
+                        >
+                          ↓
+                        </button>
+                      </div>
+                    </div>
                     <div class="d-flex gap-2 align-items-center">
                       <div class="d-flex align-items-center">
                         <label class="form-label mb-0 me-2 small">Points:</label>
@@ -449,5 +486,31 @@ export default {
 .form-text {
   color: #6c757d;
   font-size: 0.875em;
+}
+
+.disabled-arrow {
+  opacity: 0.3;
+  color: #6c757d !important;
+  border-color: #dee2e6 !important;
+  background-color: #f8f9fa !important;
+  cursor: not-allowed !important;
+}
+
+.disabled-arrow:hover {
+  opacity: 0.3 !important;
+  color: #6c757d !important;
+  border-color: #dee2e6 !important;
+  background-color: #f8f9fa !important;
+  transform: none !important;
+}
+
+.active-arrow {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.active-arrow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 </style>

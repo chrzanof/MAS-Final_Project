@@ -246,7 +246,7 @@ export default {
                   <template v-if="courses && courses[selectedCourse] && courses[selectedCourse].quizzes && Object.keys(courses[selectedCourse].quizzes).length > 0">
                     <tr v-for="(quiz, index) in sortedQuizzes" :key="quiz.id">
                       <td class="fw-semibold">
-                        <span class="badge bg-info me-2">{{ quiz.positionIndex }}</span>
+                        <span class="badge bg-secondary me-2">{{ quiz.positionIndex }}</span>
                         {{ quiz.title }}
                       </td>
                       <td class="text-muted">{{ quiz.description }}</td>
