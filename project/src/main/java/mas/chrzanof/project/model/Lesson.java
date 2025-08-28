@@ -26,7 +26,7 @@ public class Lesson {
     @Column(nullable = true)
     private String description;
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 5000)
     private String content;
 
     @Column(nullable = false)
