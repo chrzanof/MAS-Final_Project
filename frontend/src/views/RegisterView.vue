@@ -17,7 +17,7 @@ export default {
     }
   },
   mounted() {
-    // Component mounted - route guard handles auth redirects
+
   },
   methods: {
     async register() {

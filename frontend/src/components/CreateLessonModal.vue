@@ -31,7 +31,7 @@ export default {
   },
   methods: {
     async createLesson() {
-      // Validate form
+
       if (!this.form.title.trim()) {
         this.error = 'Lesson title is required'
         return

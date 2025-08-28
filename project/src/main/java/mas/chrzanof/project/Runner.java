@@ -58,7 +58,7 @@ public class Runner {
                                  PasswordEncoder passwordEncoder) {
         return args -> {
             
-            // Create people
+            
             Person sarah = new Person();
             sarah.setName("Sarah");
             sarah.setSurname("Johnson");
@@ -104,8 +104,8 @@ public class Runner {
             olivia.setLanguagesKnown(Arrays.asList("English", "French", "Portuguese"));
             personRepository.save(olivia);
 
+
             
-            // Create teachers
             Teacher teacher1 = new Teacher();
             teacher1.setPerson(sarah);
             teacherRepository.save(teacher1);
@@ -118,7 +118,7 @@ public class Runner {
             teacher3.setPerson(emma);
             teacherRepository.save(teacher3);
 
-            // Create students
+            
             Student student1 = new Student();
             student1.setPerson(emma);
             studentRepository.save(student1);
@@ -131,7 +131,7 @@ public class Runner {
             student3.setPerson(olivia);
             studentRepository.save(student3);
 
-            // Link teachers and students to persons
+
             sarah.setTeacher(teacher1);
             michael.setTeacher(teacher2);
             emma.setTeacher(teacher3);
@@ -141,8 +141,8 @@ public class Runner {
 
             personRepository.saveAll(Arrays.asList(sarah, michael, emma, james, olivia));
 
+
             
-            // Create flashcard decks
             FlashcardDeck englishDeck = new FlashcardDeck();
             englishDeck.setTitle("Advanced English Vocabulary");
             englishDeck.setDescription("Advanced English vocabulary for upper-intermediate learners");
@@ -167,8 +167,8 @@ public class Runner {
             frenchDeck.setStudent(student1);
             flashcardDeckRepository.save(frenchDeck);
 
+
             
-            // Create flashcards for English deck
             Flashcard card1 = new Flashcard();
             card1.setQuestion("What does 'ubiquitous' mean?");
             card1.setAnswer("Present, appearing, or found everywhere");
@@ -190,7 +190,7 @@ public class Runner {
             card3.setFlashcardDeck(englishDeck);
             flashcardRepository.save(card3);
 
-            // Create flashcards for German deck
+
             Flashcard card4 = new Flashcard();
             card4.setQuestion("What is 'book' in German?");
             card4.setAnswer("das Buch");
@@ -212,7 +212,7 @@ public class Runner {
             card6.setFlashcardDeck(germanDeck);
             flashcardRepository.save(card6);
 
-            // Create flashcards for Spanish deck
+
             Flashcard card7 = new Flashcard();
             card7.setQuestion("What is 'house' in Spanish?");
             card7.setAnswer("la casa");
@@ -227,7 +227,7 @@ public class Runner {
             card8.setFlashcardDeck(spanishDeck);
             flashcardRepository.save(card8);
 
-            // Create flashcards for French deck
+
             Flashcard card9 = new Flashcard();
             card9.setQuestion("What does 'néanmoins' mean in French?");
             card9.setAnswer("nevertheless, however");
@@ -242,8 +242,8 @@ public class Runner {
             card10.setFlashcardDeck(frenchDeck);
             flashcardRepository.save(card10);
 
+
             
-            // Create courses
             Course englishCourse = new Course();
             englishCourse.setTitle("Advanced English Language Course");
             englishCourse.setDescription("Comprehensive English language course for intermediate to advanced learners");
@@ -265,19 +265,19 @@ public class Runner {
             frenchCourse.setAvailableTo(LocalDateTime.now().plusMonths(5));
             courseRepository.save(frenchCourse);
 
-            // Assign teachers to courses
+            
             courseService.assignTeacher(englishCourse, teacher1);
             courseService.assignTeacher(englishCourse, teacher2);
             courseService.assignTeacher(germanCourse, teacher2);
             courseService.assignTeacher(frenchCourse, teacher3);
 
-            // Set teachers in charge
+            
             courseService.setTeacherInCharge(englishCourse, teacher1);
             courseService.setTeacherInCharge(germanCourse, teacher2);
             courseService.setTeacherInCharge(frenchCourse, teacher3);
 
             
-            // Create quizzes for English course
+            
             Quiz englishQuiz1 = new Quiz();
             englishQuiz1.setTitle("English Grammar Quiz");
             englishQuiz1.setDescription("Test your knowledge of English grammar");
@@ -292,7 +292,7 @@ public class Runner {
             englishQuiz2.setCourse(englishCourse);
             quizRepository.save(englishQuiz2);
 
-            // Create questions for first English quiz
+            
             MultichoiceQuestion q1 = new MultichoiceQuestion();
             q1.setText("Choose the correct past tense of 'go':");
             q1.setPoints(2);
@@ -310,7 +310,7 @@ public class Runner {
             q2.setOptions(Arrays.asList("sad", "joyful", "angry", "tired"));
             q2.setCorrectOptionIndex(1);
             questionRepository.save(q2);
-
+            
             OpenQuestion q3 = new OpenQuestion();
             q3.setText("What is the past participle of 'write'?");
             q3.setPoints(2);
@@ -319,7 +319,7 @@ public class Runner {
             q3.setCorrectAnswer("written");
             questionRepository.save(q3);
 
-            // Create questions for second English quiz
+
             OpenQuestion q4 = new OpenQuestion();
             q4.setText("Define the word 'ubiquitous':");
             q4.setPoints(3);
@@ -337,7 +337,7 @@ public class Runner {
             q5.setCorrectOptionIndex(0);
             questionRepository.save(q5);
 
-            // Create quizzes for German course
+
             Quiz germanQuiz1 = new Quiz();
             germanQuiz1.setTitle("German Basics Quiz");
             germanQuiz1.setDescription("Test your basic knowledge of German language");
@@ -362,7 +362,7 @@ public class Runner {
             qg2.setCorrectAnswer("Freut mich, Sie kennenzulernen");
             questionRepository.save(qg2);
 
-            // Create quiz for French course
+
             Quiz frenchQuiz1 = new Quiz();
             frenchQuiz1.setTitle("Business French Quiz");
             frenchQuiz1.setDescription("Test your knowledge of French in business context");
@@ -380,12 +380,12 @@ public class Runner {
             questionRepository.save(qf1);
 
 
-            // Create enrollments
+
             Enrollment jamesEnrollment = enrollmentService.enrollStudent(englishCourse, student2);
             Enrollment oliviaEnrollment = enrollmentService.enrollStudent(englishCourse, student3);
             Enrollment emmaEnrollment = enrollmentService.enrollStudent(germanCourse, student1);
 
-            // Create answers for James's enrollment in English course
+
             Answer answer1 = new Answer(jamesEnrollment, q1, "went");
             answer1.setIsCompleted(true);
             answer1.setIsCorrect(true);
@@ -404,7 +404,7 @@ public class Runner {
             answer3.getNotes().add("Used simple past instead of past participle");
             jamesEnrollment.addAnswer(answer3);
 
-            // Create answers for Olivia's enrollment
+            
             Answer answer4 = new Answer(oliviaEnrollment, q4, "Present, appearing, or found everywhere");
             answer4.setIsCompleted(true);
             answer4.setIsCorrect(true);
@@ -418,20 +418,20 @@ public class Runner {
             answer5.getNotes().add("Excellent answer");
             oliviaEnrollment.addAnswer(answer5);
 
-            // Create answers for Emma's German course enrollment
+
             Answer answer6 = new Answer(emmaEnrollment, qg1, "das");
             answer6.setIsCompleted(true);
             answer6.setIsCorrect(true);
             answer6.getNotes().add("Correctly identified neuter gender");
             emmaEnrollment.addAnswer(answer6);
 
-            // Save enrollments
+
             enrollmentService.saveEnrollment(jamesEnrollment);
             enrollmentService.saveEnrollment(oliviaEnrollment);
             enrollmentService.saveEnrollment(emmaEnrollment);
 
+
             
-            // Create lessons for English course
             Lesson lesson1 = new Lesson();
             lesson1.setTitle("Introduction to English Grammar");
             lesson1.setDescription("Learn the basics of English grammar, parts of speech and sentence structure.");
@@ -456,7 +456,7 @@ public class Runner {
             lesson3.setCourse(englishCourse);
             lessonRepository.save(lesson3);
 
-            // Create lessons for German course
+
             Lesson lesson4 = new Lesson();
             lesson4.setTitle("Basic Greetings and Introductions");
             lesson4.setDescription("Learn how to greet people and introduce yourself in German");
@@ -473,7 +473,7 @@ public class Runner {
             lesson5.setCourse(germanCourse);
             lessonRepository.save(lesson5);
 
-            // Create lessons for French course  
+
             Lesson lesson6 = new Lesson();
             lesson6.setTitle("French in the Office");
             lesson6.setDescription("Vocabulary and expressions used in office environment");
@@ -483,26 +483,26 @@ public class Runner {
             lessonRepository.save(lesson6);
 
             
-            // Create chats and messages
+            
             Chat englishChat = new Chat();
             englishChat.setChatName("Advanced English Course - James & Sarah");
-            englishChat.getPeople().add(james); // student
-            englishChat.getPeople().add(sarah); // teacher
+            englishChat.getPeople().add(james);
+            englishChat.getPeople().add(sarah);
             chatRepository.save(englishChat);
 
             Chat germanChat = new Chat();
             germanChat.setChatName("German for Beginners - Emma & Michael");
-            germanChat.getPeople().add(emma); // student/teacher
-            germanChat.getPeople().add(michael); // teacher
+            germanChat.getPeople().add(emma);
+            germanChat.getPeople().add(michael);
             chatRepository.save(germanChat);
 
             Chat frenchChat = new Chat();
             frenchChat.setChatName("Business French - Olivia & Emma");
-            frenchChat.getPeople().add(olivia); // student
-            frenchChat.getPeople().add(emma); // teacher
+            frenchChat.getPeople().add(olivia);
+            frenchChat.getPeople().add(emma);
             chatRepository.save(frenchChat);
 
-            // Create messages for English chat (James & Sarah)
+
             Message msg1 = new Message();
             msg1.setText("Hi! I have a question about past tenses in English.");
             msg1.setTimestamp(Timestamp.valueOf(LocalDateTime.now().minusHours(2)));
@@ -531,7 +531,7 @@ public class Runner {
             msg4.setSender(sarah);
             messageRepository.save(msg4);
 
-            // Create messages for German chat (Emma & Michael)
+
             Message msg5 = new Message();
             msg5.setText("Good day! Could you explain German articles?");
             msg5.setTimestamp(Timestamp.valueOf(LocalDateTime.now().minusHours(3)));
@@ -553,7 +553,7 @@ public class Runner {
             msg7.setSender(emma);
             messageRepository.save(msg7);
 
-            // Create messages for French chat (Olivia & Emma)
+
             Message msg8 = new Message();
             msg8.setText("Bonjour! I'm having difficulties with past tenses in French.");
             msg8.setTimestamp(Timestamp.valueOf(LocalDateTime.now().minusHours(1)));
