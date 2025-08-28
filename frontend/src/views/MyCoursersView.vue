@@ -113,6 +113,49 @@ export default {
         month: 'short',
         day: 'numeric'
       });
+    },
+    async deleteCourse(course) {
+      if (!confirm(`Are you sure you want to delete the course "${course.title}"? This will also delete all lessons and quizzes.`)) {
+        return;
+      }
+      
+      try {
+        await axios.delete(`http://localhost:8080/api/courses/${course.id}`);
+        await this.fetchCourses();
+        this.selectedCourse = null;
+        alert('Course deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting course:', error);
+        alert('Failed to delete course. Please try again.');
+      }
+    },
+    async deleteLesson(lesson) {
+      if (!confirm(`Are you sure you want to delete the lesson "${lesson.title}"?`)) {
+        return;
+      }
+      
+      try {
+        await axios.delete(`http://localhost:8080/api/courses/${this.courses[this.selectedCourse].id}/lessons/${lesson.id}`);
+        await this.fetchCourses();
+        alert('Lesson deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting lesson:', error);
+        alert('Failed to delete lesson. Please try again.');
+      }
+    },
+    async deleteQuiz(quiz) {
+      if (!confirm(`Are you sure you want to delete the quiz "${quiz.title}"?`)) {
+        return;
+      }
+      
+      try {
+        await axios.delete(`http://localhost:8080/api/courses/${this.courses[this.selectedCourse].id}/quizzes/${quiz.id}`);
+        await this.fetchCourses();
+        alert('Quiz deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting quiz:', error);
+        alert('Failed to delete quiz. Please try again.');
+      }
     }
   }
 }
@@ -140,6 +183,7 @@ export default {
                     <th scope="col">Description</th>
                     <th scope="col" style="width: 120px;">From</th>
                     <th scope="col" style="width: 120px;">To</th>
+                    <th scope="col" width="80">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -154,10 +198,20 @@ export default {
                       <td class="text-muted">{{ course.description }}</td>
                       <td class="text-muted small">{{ formatDate(course.availableFrom) }}</td>
                       <td class="text-muted small">{{ formatDate(course.availableTo) }}</td>
+                      <td class="text-center">
+                        <button 
+                          type="button" 
+                          class="btn btn-outline-danger btn-sm"
+                          @click.stop="deleteCourse(course)"
+                          title="Delete Course"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </td>
                     </tr>
                   </template>
                   <tr v-else>
-                    <td colspan="5" class="text-center text-muted py-4">
+                    <td colspan="6" class="text-center text-muted py-4">
                       <em>No courses available</em>
                     </td>
                   </tr>
@@ -222,6 +276,14 @@ export default {
                           >
                             <i class="bi bi-arrow-down"></i>
                           </button>
+                          <button 
+                            type="button" 
+                            class="btn btn-outline-danger btn-sm"
+                            @click="deleteLesson(lesson)"
+                            title="Delete Lesson"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -285,6 +347,14 @@ export default {
                             :title="quiz.positionIndex === sortedQuizzes.length - 1 ? 'Already at bottom' : 'Move Down'"
                           >
                             <i class="bi bi-arrow-down"></i>
+                          </button>
+                          <button 
+                            type="button" 
+                            class="btn btn-outline-danger btn-sm"
+                            @click="deleteQuiz(quiz)"
+                            title="Delete Quiz"
+                          >
+                            <i class="bi bi-trash"></i>
                           </button>
                         </div>
                       </td>

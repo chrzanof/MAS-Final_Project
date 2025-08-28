@@ -222,6 +222,42 @@ public class CourseController {
         return ResponseEntity.ok(courseService.updateCourse(id, course));
     }
 
+    @DeleteMapping("/{courseId}/lessons/{lessonId}")
+    public ResponseEntity<Void> deleteLesson(
+            @PathVariable Long courseId,
+            @PathVariable Long lessonId,
+            HttpServletRequest request) {
+        if (!isAuthenticated(request)) {
+            return ResponseEntity.status(401).build();
+        }
+        
+        Teacher teacher = getAuthenticatedTeacher(request);
+        if (teacher == null) {
+            return ResponseEntity.status(403).build();
+        }
+        
+        courseService.deleteLesson(courseId, lessonId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{courseId}/quizzes/{quizId}")
+    public ResponseEntity<Void> deleteQuiz(
+            @PathVariable Long courseId,
+            @PathVariable Long quizId,
+            HttpServletRequest request) {
+        if (!isAuthenticated(request)) {
+            return ResponseEntity.status(401).build();
+        }
+        
+        Teacher teacher = getAuthenticatedTeacher(request);
+        if (teacher == null) {
+            return ResponseEntity.status(403).build();
+        }
+        
+        courseService.deleteQuiz(courseId, quizId);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id, HttpServletRequest request) {
         if (!isAuthenticated(request)) {

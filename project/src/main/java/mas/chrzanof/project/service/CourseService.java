@@ -127,9 +127,16 @@ public class CourseService {
 
     @Transactional
     public void deleteCourse(Long id) {
-        if (!courseRepository.existsById(id)) {
-            throw new NoSuchElementException("Course not found with id: " + id);
-        }
+        Course course = getCourseById(id);
+        
+        course.getLessons().values().forEach(lesson -> {
+            lessonRepository.deleteById(lesson.getId());
+        });
+        
+        course.getQuizzes().forEach(quiz -> {
+            quizRepository.deleteById(quiz.getId());
+        });
+        
         courseRepository.deleteById(id);
     }
 
@@ -314,5 +321,51 @@ public class CourseService {
         course.getQuizzes().removeIf(q -> q.getId().equals(quizToMove.getId()) || q.getId().equals(quizBelow.getId()));
         course.getQuizzes().add(quizToMove);
         course.getQuizzes().add(quizBelow);
+    }
+
+    @Transactional
+    public void deleteLesson(Long courseId, Long lessonId) {
+        Course course = getCourseById(courseId);
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new NoSuchElementException("Lesson not found with id: " + lessonId));
+        
+        if (!lesson.getCourse().getId().equals(courseId)) {
+            throw new IllegalArgumentException("Lesson does not belong to the specified course");
+        }
+        
+        int deletedLessonNumber = lesson.getLessonNumber();
+        
+        course.getLessons().values().stream()
+                .filter(l -> l.getLessonNumber() > deletedLessonNumber)
+                .forEach(l -> {
+                    l.setLessonNumber(l.getLessonNumber() - 1);
+                    lessonRepository.save(l);
+                });
+        
+        course.getLessons().remove(deletedLessonNumber);
+        lessonRepository.deleteById(lessonId);
+    }
+
+    @Transactional
+    public void deleteQuiz(Long courseId, Long quizId) {
+        Course course = getCourseById(courseId);
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new NoSuchElementException("Quiz not found with id: " + quizId));
+        
+        if (!quiz.getCourse().getId().equals(courseId)) {
+            throw new IllegalArgumentException("Quiz does not belong to the specified course");
+        }
+        
+        int deletedQuizPosition = quiz.getPositionIndex();
+        
+        course.getQuizzes().stream()
+                .filter(q -> q.getPositionIndex() > deletedQuizPosition)
+                .forEach(q -> {
+                    q.setPositionIndex(q.getPositionIndex() - 1);
+                    quizRepository.save(q);
+                });
+        
+        course.getQuizzes().removeIf(q -> q.getId().equals(quizId));
+        quizRepository.deleteById(quizId);
     }
 } 
