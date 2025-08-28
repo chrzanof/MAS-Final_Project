@@ -1,21 +1,25 @@
 <script>
 import axios from 'axios'
+import { Modal } from 'bootstrap'
 import CreateCourseModal from '@/components/CreateCourseModal.vue'; 
 import CreateLessonModal from '@/components/CreateLessonModal.vue';
 import CreateQuizModal from '@/components/CreateQuizModal.vue';
+import ViewLessonModal from '@/components/ViewLessonModal.vue';
 
 export default {
   components: {
     CreateCourseModal,
     CreateLessonModal,
-    CreateQuizModal
+    CreateQuizModal,
+    ViewLessonModal
   },
   data() {
     return {
       courses: [],
       selectedCourse: 0,
       showCreateModal: false,
-      createModalType: null
+      createModalType: null,
+      selectedLesson: null
     }
   },
   mounted() {
@@ -156,6 +160,12 @@ export default {
         console.error('Error deleting quiz:', error);
         alert('Failed to delete quiz. Please try again.');
       }
+    },
+
+    viewLesson(lesson) {
+      this.selectedLesson = lesson;
+      const modal = new Modal(document.getElementById('viewLessonModal'));
+      modal.show();
     }
   }
 }
@@ -258,6 +268,14 @@ export default {
                       </td>
                       <td>
                         <div class="btn-group" role="group">
+                          <button 
+                            type="button" 
+                            class="btn btn-outline-info btn-sm"
+                            @click="viewLesson(lesson)"
+                            title="View Lesson Details"
+                          >
+                            <i class="bi bi-info-circle"></i>
+                          </button>
                           <button 
                             type="button" 
                             :class="lesson.lessonNumber === 1 ? 'btn btn-light btn-sm disabled-arrow' : 'btn btn-outline-primary btn-sm active-arrow'"
@@ -376,6 +394,8 @@ export default {
     <CreateCourseModal v-if="showCreateModal && createModalType === 'course'" @close="showCreateModal = false"/>
     <CreateLessonModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'lesson'" @close="showCreateModal = false" @lessonCreated="onLessonCreated"/>
     <CreateQuizModal :courseId="courses[selectedCourse].id" v-if="showCreateModal && createModalType === 'quiz'" @close="showCreateModal = false" @quizCreated="onQuizCreated"/>
+    
+    <ViewLessonModal :lesson="selectedLesson" />
   </div>
 </template>
 
