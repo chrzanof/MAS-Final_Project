@@ -57,7 +57,12 @@ public class Runner {
                                  EnrollmentService enrollmentService,
                                  PasswordEncoder passwordEncoder) {
         return args -> {
+            if (personRepository.count() > 0) {
+                System.out.println("Database already contains data. Skipping initialization.");
+                return;
+            }
             
+            System.out.println("Initializing database with sample data...");
             
             Person sarah = new Person();
             sarah.setName("Sarah");
@@ -567,6 +572,8 @@ public class Runner {
             msg9.setChat(frenchChat);
             msg9.setSender(emma);
             messageRepository.save(msg9);
+            
+            System.out.println("Database successfully initialized with sample data!");
         };
     }
 }

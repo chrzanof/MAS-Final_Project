@@ -23,9 +23,11 @@ Backend runs on: http://localhost:8080
 
 **Connection Settings:**
 - Driver Class: `org.h2.Driver`
-- JDBC URL: `jdbc:h2:mem:project`
+- JDBC URL: `jdbc:h2:file:./data/project`
 - Username: `sa`
 - Password: *(leave empty)*
+
+**Note:** Database files are stored in `./project/data/` directory and persist between application restarts.
 
 ## User Login Credentials
 
